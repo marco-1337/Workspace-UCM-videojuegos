@@ -17,7 +17,7 @@ bool medirDalton(const vector<int>& alturas)
     int i = 0;
     while(menosAMas && i < alturas.size()-1)
     {
-        if (alturas[i]+1 != alturas[i+1])
+        if (alturas[i] >= alturas[i+1])
             menosAMas = false;
 
         i++;
@@ -33,7 +33,7 @@ bool medirDalton(const vector<int>& alturas)
         int i = 0;
         while(masAMenos && i < alturas.size()-1)
         {
-            if (alturas[i]-1 != alturas[i+1])
+            if (alturas[i] <= alturas[i+1])
                 masAMenos = false;
 
             i++;
