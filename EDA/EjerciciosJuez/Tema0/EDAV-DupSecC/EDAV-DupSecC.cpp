@@ -5,13 +5,17 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 
+using namespace std;
 
 
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+void resolver(vector<int>& datos) {
+    for (int i = 0; i < datos.size(); i++)
+    {
+        datos[i] *= 2;
+    }
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -19,14 +23,29 @@ TipoSolucion resolver(TipoDatos datos) {
 bool resuelveCaso() {
     // leer los datos de la entrada
     
+    int len;
+    cin >> len;
+
+    vector<int> nSeq(len);
+
+    for (int i = 0; i < len; i++)
+    {
+        cin >> nSeq[i];
+    }
+
     if (! std::cin)
         return false;
     
-    TipoSolucion sol = resolver(datos);
+    resolver(nSeq);
     
     // escribir sol
+    for (int n : nSeq)
+    {
+        cout << n << " ";
+    }
     
-    
+    cout << "\n";
+
     return true;
     
 }

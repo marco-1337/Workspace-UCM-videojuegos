@@ -1,5 +1,5 @@
-// Nombre del alumno .....
-// Usuario del Juez ......
+// Nombre del alumno Marco Gonzalez Campo
+// Usuario del Juez EDA-GDV30
 
 
 #include <iostream>
@@ -38,8 +38,7 @@ int main() {
      #endif 
     
     
-    while (resuelveCaso())
-        ;
+    while (resuelveCaso());
 
     
     // Para restablecer entrada. Comentar para acepta el reto

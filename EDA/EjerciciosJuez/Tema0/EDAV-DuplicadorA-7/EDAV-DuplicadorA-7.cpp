@@ -1,37 +1,30 @@
 // Nombre del alumno Marco Gonzalez Campo
 // Usuario del Juez EDA-GDV30
 
-
 #include <iostream>
 #include <iomanip>
 #include <fstream>
 
-
-
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+void resolver(int& datos) {
+    datos *= 2;
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
-bool resuelveCaso() {
+void resuelveCaso() {
     // leer los datos de la entrada
+    int n;
+    std::cin >> n;      
     
-    if (! std::cin)
-        return false;
-    
-    TipoSolucion sol = resolver(datos);
-    
+    resolver(n);
     // escribir sol
-    
-    
-    return true;
-    
+    std::cout << n << "\n";
 }
 
 int main() {
+
+    
     // Para la entrada por fichero.
     // Comentar para acepta el reto
     #ifndef DOMJUDGE
@@ -40,7 +33,10 @@ int main() {
      #endif 
     
     
-    while (resuelveCaso());
+    int numCasos;
+    std::cin >> numCasos;
+    for (int i = 0; i < numCasos; ++i)
+        resuelveCaso();
 
     
     // Para restablecer entrada. Comentar para acepta el reto

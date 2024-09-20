@@ -7,11 +7,9 @@
 #include <fstream>
 
 
-
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+void resolver(int& datos) {
+    datos *= 2;
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -19,13 +17,17 @@ TipoSolucion resolver(TipoDatos datos) {
 bool resuelveCaso() {
     // leer los datos de la entrada
     
-    if (! std::cin)
+    int n;
+    std::cin >> n;
+
+    if (n == 0)
         return false;
     
-    TipoSolucion sol = resolver(datos);
+    resolver(n);
     
     // escribir sol
-    
+
+    std::cout << n << "\n";
     
     return true;
     
@@ -40,7 +42,8 @@ int main() {
      #endif 
     
     
-    while (resuelveCaso());
+    while (resuelveCaso())
+        ;
 
     
     // Para restablecer entrada. Comentar para acepta el reto

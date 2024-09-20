@@ -1,5 +1,5 @@
-// Nombre del alumno .....
-// Usuario del Juez ......
+// Nombre del alumno Marco Gonzalez Campo
+// Usuario del Juez EDA-GDV30
 
 
 #include <iostream>
