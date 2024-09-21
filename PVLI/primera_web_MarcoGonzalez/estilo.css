@@ -3,10 +3,6 @@
   src: url(resources/Pacifico-Regular.ttf);
 }
 
-h1 {
-  color: blue;
-}
-
 body {
   background-color: black;
 }
@@ -16,18 +12,44 @@ body {
 }
 
 .pacifico-regular {
+  font-family: "Pacifico";
+  font-weight: 400;
+  font-style: normal;
+}
+
+h1{
+  margin: 0;
+}
+h3{
+  margin: 0;
+  margin-left: 50%;
+  margin-bottom: 10%;
+  float: right;
+}
+
+#title {
+  font-family: "Pacifico";
+  font-weight: 400;
+  font-style: normal;
+  color: red;
+  font-size: 6rem;
+}
+
+#subtitle {
   font-family: "Pacifico", cursive;
   font-weight: 400;
   font-style: normal;
+  color: black;
+  font-size: 3rem;
 }
 
 #main {
   display: none;
   background: rgb(254,175,13);
-  background: linear-gradient(180deg, rgba(254, 174, 13, 0.8) 30%, rgba(254,235,11,0.8) 100%); 
+  background: linear-gradient(180deg, rgba(254, 174, 13, 0.7) 30%, rgba(254,235,11,0.5) 100%); 
 
-  width: 80%;
-  max-width: 90%;
+  width: 60%;
+  max-width: 70%;
   padding: 5%;
   box-shadow: 0 0.5% 2% rgba(0, 0, 0, 0.1);
   margin: 5% auto;
