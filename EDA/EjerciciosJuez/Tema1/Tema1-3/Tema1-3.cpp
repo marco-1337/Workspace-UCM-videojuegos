@@ -10,45 +10,42 @@
 using namespace std;
 
 // función que resuelve el problema
-vector<int> resolver(const vector<int>& datos) {
+string resolver(vector<int> datos, int posicion) {
 
-    vector<int> resultados = {0, 0};
+    int mayorPrimeraMitad = datos[0];
 
-    if (datos.size() > 2) 
+    for (size_t i = 1; i <= posicion; i++)
     {
-        for (size_t i = 1; i < datos.size() - 1; i++)
-        {
-            if (datos[i-1] < datos[i] && datos[i] > datos[i+1])
-            {
-                resultados[0]++;
-            }
-            else if (datos[i-1] > datos [i] && datos[i] < datos[i+1])
-            {
-                resultados[1]++;
-            }
-        }
+        if ( datos[i] > mayorPrimeraMitad )
+            mayorPrimeraMitad = datos[i];
     }
-    
-    return resultados;
+
+    for (size_t i = posicion + 1; i < datos.size(); i++)
+    {
+        if ( datos[i] <= mayorPrimeraMitad ) 
+            return "NO";
+    }
+    return "SI";
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 void resuelveCaso() {
     // leer los datos de la entrada
-    size_t n;
-    cin >> n;
+    int n, posicion;
+    cin >> n >> posicion;
 
     vector<int> datos(n);
 
-    for (int i = 0; i < n; i++)
+    for (size_t i = 0; i < n; i++)
     {
         cin >> datos[i];
     }
 
-    vector<int> sol = resolver(datos);
+    string sol = resolver(datos, posicion);
     // escribir sol
-    cout << sol[0] << " " << sol[1] << "\n";
+    cout << sol << "\n";
+    
 }
 
 int main() {

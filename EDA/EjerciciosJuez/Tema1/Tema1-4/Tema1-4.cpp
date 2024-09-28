@@ -10,45 +10,47 @@
 using namespace std;
 
 // función que resuelve el problema
-vector<int> resolver(const vector<int>& datos) {
+vector<long long int> resolver(const vector<long long int>& datos) {
 
-    vector<int> resultados = {0, 0};
+    vector<long long int> sinImpares(datos.size());
 
-    if (datos.size() > 2) 
+    int ultimoIndexUtil = 0;
+
+    for (size_t i = 0; i < datos.size(); i++)
     {
-        for (size_t i = 1; i < datos.size() - 1; i++)
+        if ( datos[i] % 2 == 0 )
         {
-            if (datos[i-1] < datos[i] && datos[i] > datos[i+1])
-            {
-                resultados[0]++;
-            }
-            else if (datos[i-1] > datos [i] && datos[i] < datos[i+1])
-            {
-                resultados[1]++;
-            }
+            sinImpares[ultimoIndexUtil] = datos[i];
+            ultimoIndexUtil++;
         }
     }
-    
-    return resultados;
+
+    sinImpares.resize(ultimoIndexUtil);
+
+    return sinImpares;
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 void resuelveCaso() {
     // leer los datos de la entrada
-    size_t n;
-    cin >> n;
-
-    vector<int> datos(n);
-
-    for (int i = 0; i < n; i++)
+    int n;
+    cin >> n; 
+    vector<long long int> datos(n);
+    for (size_t i = 0; i < n; i++)
     {
         cin >> datos[i];
     }
-
-    vector<int> sol = resolver(datos);
+    
+    vector<long long int> sol = resolver(datos);
     // escribir sol
-    cout << sol[0] << " " << sol[1] << "\n";
+
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        cout << sol[i] << " ";
+    }
+    
+    cout << "\n";
 }
 
 int main() {
