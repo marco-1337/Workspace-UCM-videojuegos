@@ -10,24 +10,23 @@
 using namespace std;
 
 // función que resuelve el problema
-vector<long long int> resolver(const vector<long long int>& datos) {
+void resolver(vector<long long int>& datos) {
 
-    vector<long long int> sinImpares(datos.size());
-
-    int ultimoIndexUtil = 0;
+    int casillasVacias = 0;
 
     for (size_t i = 0; i < datos.size(); i++)
     {
         if ( datos[i] % 2 == 0 )
         {
-            sinImpares[ultimoIndexUtil] = datos[i];
-            ultimoIndexUtil++;
+            datos[i - casillasVacias] = datos[i];
+        }
+        else
+        {
+            casillasVacias++;
         }
     }
 
-    sinImpares.resize(ultimoIndexUtil);
-
-    return sinImpares;
+    datos.resize(datos.size() - casillasVacias);
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -42,12 +41,12 @@ void resuelveCaso() {
         cin >> datos[i];
     }
     
-    vector<long long int> sol = resolver(datos);
+    resolver(datos);
     // escribir sol
 
-    for (size_t i = 0; i < sol.size(); i++)
+    for (size_t i = 0; i < datos.size(); i++)
     {
-        cout << sol[i] << " ";
+        cout << datos[i] << " ";
     }
     
     cout << "\n";
