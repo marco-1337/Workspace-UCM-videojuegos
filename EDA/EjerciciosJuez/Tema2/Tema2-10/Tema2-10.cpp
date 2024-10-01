@@ -8,22 +8,27 @@
 #include <vector>
 using namespace std;
 
-// función que resuelve el problema
-int resolver(const vector<int>& sec, int ini, int fin) {
+int encontrarImpar(const vector<int>& sec, int ini, int fin) {
     int n = fin - ini;
 
     if(n == 1) return sec[ini];
 
     int mitad = (ini + fin) / 2;
 
-    int mitadEsperada = 2 * (mitad + (sec[ini] / 2 )); 
-
-    if(sec[mitad] == mitadEsperada-1)
+    if(sec[mitad] % 2 == 1)
         return sec[mitad];
-    else if (sec[mitad] == mitadEsperada)
-        return resolver(sec, mitad, fin);
+
+    int medioEsperado = sec[0] + mitad * 2;
+
+    if(medioEsperado != sec[mitad])
+        return encontrarImpar(sec, ini, mitad);
     else    
-        return resolver(sec, ini, mitad);
+        return encontrarImpar(sec, mitad, fin);
+}
+
+// función que resuelve el problema
+int resolver(const vector<int>& sec, int ini, int fin) {
+    return encontrarImpar(sec, ini, fin);
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
