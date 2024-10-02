@@ -22,24 +22,24 @@ int resolver(const vector<int>& sec, int ini, int fin) {
 
     if (mitad % 2 != 0) 
     {
-        if(sec[mitad-1] == sec[mitad])
+        if(sec[mitad-1] < sec[mitad])
         {
-            return resolver(sec, mitad + 1, fin);
+            return resolver(sec, ini, mitad);
         }
         else
         {
-            return resolver(sec, ini, mitad);
+            return resolver(sec, mitad + 1, fin);
         }
     }
     else
     {
-        if(sec[mitad] == sec[mitad+1])
+        if(sec[mitad] < sec[mitad+1])
         {
-            return resolver(sec, mitad + 2, fin);
+            return resolver(sec, ini, mitad + 1);
         }
         else
         {
-            return resolver(sec, ini, mitad + 1);
+            return resolver(sec, mitad + 2, fin);
         }
     }
 }
