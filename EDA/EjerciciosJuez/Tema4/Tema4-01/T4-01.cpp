@@ -11,19 +11,34 @@ using namespace std;
 
 int sumarCuadrados(int n)
 {
+    int aux = 0;
 
+    while(n > 0)
+    {
+        aux += ((n % 10) * (n % 10));
+        n /= 10;
+    }
+
+    return aux;
 }
 
 // función que resuelve el problema
+// O(n log n) siendo n  los numeros calculados hasta llegar a la conclusión de si es feliz o no
 void resolver(const int dato) {
     set<int> conjunto;
 
     int n = dato;
 
-    while(conjunto.find(n) != conjunto.end())
+    cout << n << " ";
+
+    while(conjunto.find(n) == conjunto.end())
     {
+        conjunto.insert(n);
         n = sumarCuadrados(n);
+        cout << n << " ";
     }
+
+    cout << ((n==1) ? "\n" : "0\n");
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
