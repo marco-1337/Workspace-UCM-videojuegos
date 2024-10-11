@@ -1,7 +1,14 @@
+// Nombre del alumno Marco Gonzalez Campo
+// Usuario del Juez EDA-GDV30
+
+//  Implementación del TAD Set con array dinámico ordenado y sin repeticiones
+
+#ifndef SET_H
+#define SET_H
+
 #include <string>
 #include <iostream>
 #include <algorithm>
-
 using namespace std;
 
 template <class T>
@@ -124,9 +131,9 @@ public:
     // O(n+m) siendo n = this.nelems y m = other.nelems
     // Como ya se comprueba que los elementos a añadir estén en orden todas las ejecuciones de
     // shift left from serán de O(1) en este caso
-    Set<T> operator||(const Set<T>& other) const
+    Set<T> operator-(const Set<T>& other) const
     {
-        Set<T> result;
+        Set<T> result = Set<T>(nelems);
 
         int i = 0, j = 0;
 
@@ -134,61 +141,8 @@ public:
         {
             if (array[i] < other.array[j]) 
             {
-                result.add(array[i]);
-                i++;
-            } 
-            else if (array[i] > other.array[j]) 
-            {
-                result.add(other.array[j]);
-                j++;
-            } 
-            else 
-            {
-                result.add(array[i]);
-                i++;
-                j++;
-            }
-        }
-
-        int k;
-        T* auxArray;
-        int auxN;
-
-        if(i < nelems)
-        {
-            k = i;
-            auxArray = array;
-            auxN = nelems;
-        }
-        else
-        {
-            k = j;
-            auxArray = other.array;
-            auxN = other.nelems;
-        }
-
-        while (k < auxArray) 
-        {
-            result.add(auxArray[i]);
-            k++;
-        }
-
-        return result;
-    }
-
-    // O(n+m) siendo n = this.nelems y m = other.nelems
-    // Como ya se comprueba que los elementos a añadir estén en orden todas las ejecuciones de
-    // shift left from serán de O(1) en este caso
-    Set<T> operator&&(const Set<T>& other) const
-    {
-        Set<T> result;
-
-        int i = 0, j = 0;
-
-        while (i < nelems && j < other.nelems) 
-        {
-            if (array[i] < other.array[j]) 
-            {
+                result.array[result.nelems] = array[i];
+                result.nelems = result.nelems+1;
                 i++;
             } 
             else if (array[i] > other.array[j]) 
@@ -197,10 +151,15 @@ public:
             } 
             else 
             {
-                result.add(array[i]);
                 i++;
                 j++;
             }
+        }
+
+        while (i < nelems) 
+        {
+            result.add(array[i]);
+            i++;
         }
 
         return result;
@@ -284,10 +243,11 @@ protected:
 
 template <class T>
 ostream& operator<<(ostream& out, Set<T> const& set) {
-    out << "{";
     for (int i = 0; i < set.nelems-1; i++)
-        out << set.array[i] << ",";
+        out << set.array[i] << " ";
     if (set.nelems > 0) out << set.array[set.nelems-1];
-    out << "}";
     return out;
 }
+
+
+#endif //SET_H
