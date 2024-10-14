@@ -5,30 +5,60 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 
 #include "Set.h"
 
-/*
+using namespace std;
+
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
+void resolver(const vector<int>& datos, int k, Set<int>& auxSet, int ini, int fin) {
+    int n = fin - ini;
+    if(n == 1)
+    {
+        if(auxSet.size() < k)
+            auxSet.add(datos[ini]);
+        else
+        {
+            if((*auxSet.getMax()) > datos[ini]) 
+            {
+                auxSet.removeMax();
+                auxSet.add(datos[ini]);
+            }
+        }
+    }
+
+    int mitad = (fin + ini) / 2;
+
     
 }
-*/
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 bool resuelveCaso() {
     // leer los datos de la entrada
     
-    if (! std::cin)
+    int nMenores, num;
+    cin >> nMenores;
+
+    if (nMenores == 0)
         return false;
+
+    vector<int> datos;
+
+    cin >> num;
+    while(num != -1){
+        datos.push_back(num);
+        cin >> num;
+    }
     
-    //TipoSolucion sol = resolver(datos);
+    Set<int> auxSet(nMenores);
+
+    resolver(datos, nMenores, auxSet, 0, datos.size());
     
     // escribir sol
-    
-    
+    cout << auxSet << "\n";
+
     return true;
     
 }

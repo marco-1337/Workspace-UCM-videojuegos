@@ -1,3 +1,6 @@
+// Nombre del alumno Marco Gonzalez Campo
+// Usuario del Juez EDA-GDV30
+
 #include <string>
 #include <iostream>
 #include <algorithm>
@@ -126,7 +129,7 @@ public:
     // shift left from serán de O(1) en este caso
     Set<T> operator||(const Set<T>& other) const
     {
-        Set<T> result;
+        Set<T> result(nelems + other.nelems);
 
         int i = 0, j = 0;
 
@@ -134,17 +137,20 @@ public:
         {
             if (array[i] < other.array[j]) 
             {
-                result.add(array[i]);
+                result.array[result.nelems] = array[i];
+                result.nelems++;
                 i++;
             } 
             else if (array[i] > other.array[j]) 
             {
-                result.add(other.array[j]);
+                result.array[result.nelems] = other.array[j];
+                result.nelems++;
                 j++;
             } 
             else 
             {
-                result.add(array[i]);
+                result.array[result.nelems] = array[i];
+                result.nelems++;
                 i++;
                 j++;
             }
@@ -167,9 +173,10 @@ public:
             auxN = other.nelems;
         }
 
-        while (k < auxArray) 
+        while (k < auxN)
         {
-            result.add(auxArray[i]);
+            result.array[result.nelems] = auxArray[k];
+            result.nelems++;
             k++;
         }
 
@@ -181,7 +188,7 @@ public:
     // shift left from serán de O(1) en este caso
     Set<T> operator&&(const Set<T>& other) const
     {
-        Set<T> result;
+        Set<T> result(nelems + other.nelems);
 
         int i = 0, j = 0;
 
@@ -197,13 +204,42 @@ public:
             } 
             else 
             {
-                result.add(array[i]);
+                result.array[result.nelems] = array[i];
+                result.nelems++;
                 i++;
                 j++;
             }
         }
 
         return result;
+    }
+
+    // O(1)
+    T* getMin()
+    {
+        return ((nelems > 0) ? &array[0] : nullptr);
+    }
+
+    // O(1)
+    T* getMax()
+    {
+        return ((nelems > 0) ? &array[nelems-1] : nullptr);
+    }
+
+    // O(n-1) siendo n nelems
+    void removeMin()
+    {
+        if(nelems > 0) {
+            shiftLeftFrom(0);
+            nelems--;
+        }
+    }
+
+    // O(1)
+    void removeMax()
+    {
+        if(nelems > 0)
+            nelems--;
     }
 
     template <class E>
@@ -284,10 +320,8 @@ protected:
 
 template <class T>
 ostream& operator<<(ostream& out, Set<T> const& set) {
-    out << "{";
     for (int i = 0; i < set.nelems-1; i++)
-        out << set.array[i] << ",";
+        out << set.array[i] << " ";
     if (set.nelems > 0) out << set.array[set.nelems-1];
-    out << "}";
     return out;
 }
