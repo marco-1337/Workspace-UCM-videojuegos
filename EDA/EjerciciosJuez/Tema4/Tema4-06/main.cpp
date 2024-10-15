@@ -12,25 +12,23 @@
 using namespace std;
 
 // función que resuelve el problema
-void resolver(const vector<int>& datos, int k, Set<int>& auxSet, int ini, int fin) {
-    int n = fin - ini;
-    if(n == 1)
+// O(n*k) siendo n datos.size() y siendo k el numero de elementos menores a buscar
+void resolver(const vector<int>& datos, const int& k, Set<int>& auxSet, int cont) {
+
+    if (cont < datos.size()-1)
     {
-        if(auxSet.size() < k)
-            auxSet.add(datos[ini]);
-        else
-        {
-            if((*auxSet.getMax()) > datos[ini]) 
-            {
-                auxSet.removeMax();
-                auxSet.add(datos[ini]);
-            }
-        }
+        resolver(datos, k, auxSet, cont+1);
     }
 
-    int mitad = (fin + ini) / 2;
-
-    
+    if(auxSet.size() < k)
+    {
+        auxSet.add(datos[cont]);
+    }
+    else if(*auxSet.getMax() > datos[cont] && !auxSet.contains(datos[cont]))
+    {
+        auxSet.removeMax();
+        auxSet.add(datos[cont]);
+    } 
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -54,7 +52,7 @@ bool resuelveCaso() {
     
     Set<int> auxSet(nMenores);
 
-    resolver(datos, nMenores, auxSet, 0, datos.size());
+    resolver(datos, nMenores, auxSet, 0);
     
     // escribir sol
     cout << auxSet << "\n";
