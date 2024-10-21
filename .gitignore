@@ -27,6 +27,41 @@
 *.lib
 
 # Executables
-*.exe
 *.out
 *.app
+
+# Archivos generados por Visual Studio
+.vs/
+*.vcxproj.user
+
+# Carpetas de compilación
+*/x64/
+*/Debug/
+*/Release/
+**/out/build/**/*
+
+# Archivos temporales de compilación
+*.obj
+*.exe
+*.pdb
+*.ilk
+*.idb
+*.ipch
+*.log
+*.tlog
+
+# Archivos de solución de Visual Studio
+*.sln.docstates
+
+# Archivos y carpetas generados por CMake en cualquier subdirectorio
+**/build/compile_commands.json
+cmake-build-*
+CMakeFiles
+.cmake
+Makefile
+CMakeCache.txt
+cmake_install.cmake
+CMakePresets.json
+
+# Archivos de configuración de VSCode en cualquier subdirectorio
+.vscode/
