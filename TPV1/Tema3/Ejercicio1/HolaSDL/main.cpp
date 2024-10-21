@@ -24,12 +24,12 @@ void firstTest()
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 	SDL_Texture* textureBG;
-	string filename = "images\\background1.png";
+	string filename = "..\\images\\background1.png";
 	SDL_Surface* surface = IMG_Load(filename.c_str());
 	textureBG = SDL_CreateTextureFromSurface(renderer, surface);
 
 	SDL_Texture* textureDog;
-    filename = "images\\dog.png";
+    filename = "..\\images\\dog.png";
 	surface = IMG_Load(filename.c_str());
 	textureDog = SDL_CreateTextureFromSurface(renderer, surface);
 
