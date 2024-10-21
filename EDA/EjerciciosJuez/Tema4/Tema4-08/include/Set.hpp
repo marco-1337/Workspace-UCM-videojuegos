@@ -9,6 +9,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+
 using namespace std;
 
 template <class T>
@@ -144,7 +145,7 @@ public:
                 result.array[result.nelems] = array[i];
                 result.nelems = result.nelems+1;
                 i++;
-            } 
+            }
             else if (array[i] > other.array[j]) 
             {
                 j++;
@@ -198,6 +199,8 @@ protected:
 
         pos = binSearchAux(x, 0, nelems - 1);
         found = (pos >= 0) && (pos < nelems) && (array[pos] == x);
+
+        
 
         // Post : devuelve el mayor índice i (0 <= i <= nelems-1) que cumple
         //        array[i] <= x
