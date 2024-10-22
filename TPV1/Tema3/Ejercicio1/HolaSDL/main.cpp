@@ -16,6 +16,10 @@ void firstTest()
 	constexpr uint winWidth = 800;
 	constexpr uint winHeight = 600;
 
+	constexpr int FRAME_RATE = 50;
+	constexpr int ANIMATION_UPDATE_RATE = 100;
+	constexpr int SPEED = 10;
+
 	SDL_Init(SDL_INIT_EVERYTHING);
 
 	window = SDL_CreateWindow("First test with SDL", SDL_WINDOWPOS_CENTERED,
@@ -38,7 +42,8 @@ void firstTest()
 	SDL_Rect destRect;
 
 	destRect.w = destRect.h = 100;
-	destRect.x = destRect.y = 0; 
+	destRect.x = 0;
+	destRect.y = winHeight - winHeight/4; 
 
 	SDL_Rect srcRect;
 
@@ -50,17 +55,60 @@ void firstTest()
 	srcRect.h = dogTextH / 1;
 	srcRect.x = srcRect.y = 0; 
 
+	SDL_Event event;
+	bool exit = false;
+
+	uint32_t startTime, frameTime;
+	uint32_t animStartTime, animTime;
+	startTime = animStartTime = SDL_GetTicks();
+
 	if (window == nullptr || renderer == nullptr)
 		cout << "Error cargando SDL" << endl;
-	else {
-		SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-		SDL_RenderClear(renderer);
+	else 
+	{
+		while (!exit) 
+		{
+			while (SDL_PollEvent(&event) && !exit) 
+			{
+				if (event.type == SDL_QUIT)
+					exit = true;
+			}
 
-		SDL_RenderCopy(renderer, textureBG, nullptr, nullptr);
-		SDL_RenderCopy(renderer, textureDog, &srcRect, &destRect);
+			frameTime = SDL_GetTicks() - startTime;
+			animTime = SDL_GetTicks() - animStartTime;
 
-		SDL_RenderPresent(renderer);
-		SDL_Delay(5000);
+			if (frameTime >= FRAME_RATE) 
+			{
+				if (destRect.x + SPEED > (int)winWidth)
+				{
+					destRect.x = ((destRect.x + SPEED) - destRect.w) - winWidth;
+				}
+				else
+					destRect.x += SPEED;
+
+				startTime = SDL_GetTicks();
+			}
+
+			if (animTime >= ANIMATION_UPDATE_RATE) 
+			{
+				if (srcRect.x/(dogTextW / 6) == 5)
+				{
+					srcRect.x = 0;
+				}
+				else
+					srcRect.x += dogTextW / 6;
+
+				animStartTime = SDL_GetTicks();
+			}
+
+			SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+			SDL_RenderClear(renderer);
+
+			SDL_RenderCopy(renderer, textureBG, nullptr, nullptr);
+			SDL_RenderCopy(renderer, textureDog, &srcRect, &destRect);
+
+			SDL_RenderPresent(renderer);
+		}
 	}
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
