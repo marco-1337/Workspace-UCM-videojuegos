@@ -16,7 +16,7 @@ void firstTest()
 	constexpr uint winWidth = 800;
 	constexpr uint winHeight = 600;
 
-	constexpr int FRAME_RATE = 50;
+	constexpr int FRAME_DISTANCE = 50;
 	constexpr int ANIMATION_UPDATE_RATE = 100;
 	constexpr int SPEED = 10;
 
@@ -77,7 +77,7 @@ void firstTest()
 			frameTime = SDL_GetTicks() - startTime;
 			animTime = SDL_GetTicks() - animStartTime;
 
-			if (frameTime >= FRAME_RATE) 
+			if (frameTime >= FRAME_DISTANCE) 
 			{
 				if (destRect.x + SPEED > (int)winWidth)
 				{
