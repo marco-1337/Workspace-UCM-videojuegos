@@ -80,6 +80,7 @@ public:
     */
    using const_iterator = Iterador<T const>;
    
+   
    // devuelven un iterador constante al principio de la lista
    const_iterator cbegin() const {
       return const_iterator(this->fantasma->sig, this->fantasma);

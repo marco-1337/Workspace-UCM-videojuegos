@@ -11,9 +11,33 @@
 using namespace std;
 
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+// O(n) siendo n longitud de datos
+void resolver(list<int>& datos) {
+
+    list<int>::iterator it = datos.begin();
+    list<int> salida;
+
+    if(it != datos.end()) 
+    {
+        int numAnterior = *it;
+        salida.push_back(numAnterior);
+
+        ++it;
+
+        while (it != datos.end())
+        {
+            if(*it >= numAnterior)
+            {
+                numAnterior = *it;
+                salida.push_back(numAnterior);
+
+            }
+            
+            ++it;
+        }
+    }
+
+    datos = salida;
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -29,12 +53,18 @@ void resuelveCaso() {
     while (n != -1)
     {
         datos.push_back(n);
+        cin >> n;
     }
     
-    TipoSolucion sol = resolver(datos);
+    resolver(datos);
     // escribir sol
     
-    
+    for (auto i = datos.begin(); i != datos.end(); ++i)
+    {
+        cout << *i << " ";
+    }
+
+    cout << "\n";
 }
 
 int main() {
