@@ -18,44 +18,39 @@ int rescateExcursionistas(const bintree<int> tree, int& nEquiposRescate, int& di
         indicadorRescate = false;
         return 0;
     }
-
-    int distIzq, distDer;
-    bool indicadorIzq, indicadorDer;
-
-    int izq = rescateExcursionistas(tree.left(), nEquiposRescate, distIzq, indicadorIzq);
-    int der = rescateExcursionistas(tree.right(), nEquiposRescate, distDer, indicadorDer);
-
-    if (distIzq == 0 && distDer == 0)
+    else if (tree.left().empty() && tree.right().empty())
     {
         distanciaRescatadores = 1;
-        izq = der = 0;
-    }
 
-    indicadorRescate = indicadorIzq || indicadorDer;
-
-    if (indicadorIzq && indicadorDer)
-    {
-        distanciaRescatadores = min(distIzq, distDer);
-        return tree.root() + max(izq, der);
-    }
-    else if (indicadorIzq)
-    {
-        distanciaRescatadores = distIzq;
-        return tree.root() + izq;
-    }
-    else if (indicadorDer)
-    {
-        distanciaRescatadores = distDer;
-        return tree.root() + der;
-    }
-    else
-    {
         if (tree.root() > 0)
         {
             indicadorRescate = true;
             nEquiposRescate++;
         }
-        return tree.root();
+        else 
+        {
+            indicadorRescate = false;
+        }
+    }
+    else
+    {
+        int distIzq, distDer;
+        bool indicadorIzq, indicadorDer;
+
+        int izq = rescateExcursionistas(tree.left(), nEquiposRescate, distIzq, indicadorIzq);
+        int der = rescateExcursionistas(tree.right(), nEquiposRescate, distDer, indicadorDer);
+
+        if (indicadorIzq || indicadorDer) 
+        {
+            indicadorRescate = true;
+        }
+        else
+        {
+            if (tree.root() > 0) 
+            {
+                
+            }
+        }
     }
 }
 
