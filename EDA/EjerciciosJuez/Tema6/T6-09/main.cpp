@@ -9,49 +9,29 @@
 using namespace std;
 
 // O(n) siendo n el numero de nodos en el arbol
-int rescateExcursionistas(const bintree<int> tree, int& nEquiposRescate, int& distanciaRescatadores, bool& indicadorRescate)
+int rescateExcursionistas(const bintree<int> tree, int& nEquiposRescate, bool& indicadorRescate)
 {
     //caso base
     if (tree.empty())
     {
-        distanciaRescatadores = 0;
         indicadorRescate = false;
         return 0;
     }
-    else if (tree.left().empty() && tree.right().empty())
+
+    bool indicadorIzq, indicadorDer;
+
+    int izq = rescateExcursionistas(tree.left(), nEquiposRescate, indicadorIzq);
+    int der = rescateExcursionistas(tree.right(), nEquiposRescate, indicadorDer);
+
+    indicadorRescate = indicadorIzq || indicadorDer;
+
+    if (!indicadorRescate && tree.root() > 0)
     {
-        distanciaRescatadores = 1;
-
-        if (tree.root() > 0)
-        {
-            indicadorRescate = true;
-            nEquiposRescate++;
-        }
-        else 
-        {
-            indicadorRescate = false;
-        }
+        nEquiposRescate++;
+        indicadorRescate = true;
     }
-    else
-    {
-        int distIzq, distDer;
-        bool indicadorIzq, indicadorDer;
-
-        int izq = rescateExcursionistas(tree.left(), nEquiposRescate, distIzq, indicadorIzq);
-        int der = rescateExcursionistas(tree.right(), nEquiposRescate, distDer, indicadorDer);
-
-        if (indicadorIzq || indicadorDer) 
-        {
-            indicadorRescate = true;
-        }
-        else
-        {
-            if (tree.root() > 0) 
-            {
-                
-            }
-        }
-    }
+    
+    return (tree.root() + max(izq, der));
 }
 
 pair<int, int> rescateExcursionistas(const bintree<int> tree)
@@ -60,7 +40,7 @@ pair<int, int> rescateExcursionistas(const bintree<int> tree)
     bool b;
     int n = 0;
 
-    int camino = rescateExcursionistas(tree, n, i, b);
+    int camino = rescateExcursionistas(tree, n, b);
 
     return {n, camino};
 }
