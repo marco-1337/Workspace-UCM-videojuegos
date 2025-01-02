@@ -6,12 +6,42 @@
 #include <iomanip>
 #include <fstream>
 
+#include <vector>
+
 using namespace std;
 
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+void resolver(vector<int>& sol, int n, int k) {
+    for(int i = 0; i < 3; ++i)
+    {
+        sol[k] = i;
+
+        if (k == n-1)
+        {
+            for (int e : sol)
+            {
+                switch (e)
+                {
+                case 0:
+                    cout << "azul";
+                    break;
+                case 1:
+                    cout << "rojo";
+                    break;
+                case 2:
+                    cout << "verde";
+                    break;
+                default:
+                    cout << "ERROR";
+                    break;
+                }
+
+                cout << " ";
+            }
+            cout << "\n";
+        }
+        else resolver(sol, n, k+1);
+    }
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -19,16 +49,18 @@ TipoSolucion resolver(TipoDatos datos) {
 bool resuelveCaso() {
     // leer los datos de la entrada
     
-    if (! std::cin)
+    int n;
+    cin >> n;
+
+    if (n == 0)
         return false;
     
-    TipoSolucion sol = resolver(datos);
-    
-    // escribir sol
-    
+    vector<int> sol(n);
+
+    resolver(sol, n, 0);
+    cout << "\n";
     
     return true;
-    
 }
 
 int main() {
@@ -39,9 +71,7 @@ int main() {
      auto cinbuf = std::cin.rdbuf(in.rdbuf()); //save old buf and redirect std::cin to casos.txt
      #endif 
     
-    
     while (resuelveCaso());
-
     
     // Para restablecer entrada. Comentar para acepta el reto
      #ifndef DOMJUDGE // para dejar todo como estaba al principio

@@ -6,12 +6,32 @@
 #include <iomanip>
 #include <fstream>
 
+#include <vector>
+
 using namespace std;
 
+const char START_CHAR = 'a';
+const char END_CHAR = 'z'+1;
+
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+void resolver(vector<char>& sol, int n, int k, int kMax) {
+    for (int i = 0; i < kMax && i < END_CHAR; i++)
+    {
+        sol[k] = START_CHAR + i;
+
+        if (k == n-1)
+        {
+            for(char& c : sol)
+            {
+                cout << c;
+            }
+            cout << '\n';
+        }
+        else
+        {
+            resolver(sol, n, k+1, kMax);
+        }
+    }
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
@@ -19,10 +39,18 @@ TipoSolucion resolver(TipoDatos datos) {
 bool resuelveCaso() {
     // leer los datos de la entrada
     
+    int nLetras, n;
+
+    cin >> nLetras;
+    cin >> n;
+
     if (! std::cin)
         return false;
     
-    TipoSolucion sol = resolver(datos);
+    vector<char> sol(n);
+
+    resolver(sol, n, 0, nLetras);
+    cout << '\n';
     
     // escribir sol
     

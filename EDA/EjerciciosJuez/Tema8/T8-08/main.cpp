@@ -1,7 +1,6 @@
 /*
 Nombre completo: Marco Gonzalez Campo
 Usuario del juez: EDA-GDV30
-Qué has conseguido hacer y qué no: 
 */
 
 #include <iostream>
@@ -10,6 +9,7 @@ Qué has conseguido hacer y qué no:
 #include <vector>
 #include <utility>
 
+#include <queue>
 #include <list>
 #include <map>
 #include <unordered_map>
@@ -48,15 +48,15 @@ public:
         datosV.vida = puntos;
         datosV.daño = valor;
 
-        auto [itV, inserted] = villanos.emplace(v, datosV);
+        auto [itV, inserted] = villanos.emplace(v, datosV); // O(1)
         if(!inserted)
         {
             throw invalid_argument("Personaje ya existente");
         }
         else
         {
-            colaTurnos.push_front({v, puntos});
-            itV->second.turnPosition = colaTurnos.begin();
+            colaTurnos.push_back({v, puntos}); // O(1)
+            itV->second.turnPosition = prev(colaTurnos.end()); // O(1) al usar prev sobre una list
         }
     }
 
@@ -66,15 +66,15 @@ public:
         DatosHeroe datosH;
         datosH.vida = puntos;
 
-        auto [itH, inserted] = villanos.emplace(h, datosH);
+        auto [itH, inserted] = heroes.emplace(h, datosH); // O(1)
         if(!inserted)
         {
             throw invalid_argument("Personaje ya existente");
         }
         else
         {
-            colaTurnos.push_front({h, puntos});
-            itH->second.turnPosition = colaTurnos.begin();
+            colaTurnos.push_back({h, puntos}); // O(1)
+            itH->second.turnPosition = prev(colaTurnos.end()); // O(1) al usar prev sobre una list
         }
     }
 
@@ -85,76 +85,126 @@ public:
         DatosHeroe* hData;
         try 
         {
-            hData = &heroes.at(h);
+            hData = &heroes.at(h); // O(1)
         }
         catch(out_of_range& e)
         {
             throw invalid_argument("Heroe inexistente");
         }
 
-        auto [it, inserted] = hData->ataques.emplace(ataque, valor);
+        auto [it, inserted] = hData->ataques.emplace(ataque, valor); // O(log A)
         if(!inserted) throw invalid_argument("Ataque repetido");
     }
 
     // A: numero de ataques en el heroe
-    // Coste: O (A)
+    // Coste: O(A)
     vector<pair<string,int>> mostrar_ataques(Heroe const& h){
         map<Ataque, int> listaAtaques;
         try 
         {
-            listaAtaques = heroes.at(h).ataques;
+            listaAtaques = heroes.at(h).ataques; // O(1)
         }
         catch(out_of_range& e)
         {
             throw invalid_argument("Heroe inexistente");
         }
 
-        vector<pair<string,int>> res(listaAtaques.size());
+        vector<pair<string,int>> res;
         
-        for (auto elem : listaAtaques)
+        // O(A)
+        for (auto ataque : listaAtaques)
         {
-            res.push_back(elem);
+            res.push_back(ataque); // O(1)
         }
 
         return res;
     }
 
-    // T: siendo T el numero total de turnos
-    // Coste: O (T)
+    // T: numero total de turnos
+    // Coste: O(T)
     vector<pair<string,int>> mostrar_turnos(){
-        vector<pair<string,int>> res(colaTurnos.begin(), colaTurnos.end());
-
+        vector<pair<string,int>> res(colaTurnos.begin(), colaTurnos.end()); // O(T)
         return res;
     }
 
-    // Coste:
+    // Coste: O(1)
     bool villano_ataca(Villano const& v, Heroe const& h){
-        ...
-        throw invalid_argument("Villano inexistente");
-        ...
-        throw invalid_argument("Heroe inexistente");
-        ...
-        throw invalid_argument("No es su turno");
-        ...
+
+        auto itV = villanos.find(v); // O(1)
+        if(itV == villanos.end()) //O(1)
+            throw invalid_argument("Villano inexistente");
+
+        auto itH = heroes.find(h); // O(1)
+        if(itH == heroes.end()) // O(1)
+            throw invalid_argument("Heroe inexistente");
+        
+        if (v != colaTurnos.front().first) // O(1)
+            throw invalid_argument("No es su turno");
+        
+        itH->second.vida -= itV->second.daño;
+        itH->second.turnPosition->second -= itV->second.daño;
+
+        bool battleResult = false;
+
+        if (itH->second.vida <= 0)
+        {
+            colaTurnos.erase(itH->second.turnPosition); // O(1)
+            heroes.erase(itH); // O(1)
+
+            battleResult = true;
+        }
+
+        colaTurnos.pop_front(); // O(1)
+        colaTurnos.push_back({v, itV->second.vida}); // O(1)
+
+        villanos[v].turnPosition = prev(colaTurnos.end());
+
+        //itV->second.turnPosition = prev(colaTurnos.end()); // O(1) al usar prev sobre una list
+
+        return battleResult;
     }
 
-    // Coste:
+    // A: ataques en heroe h
+    // Coste: O(log A)
     bool heroe_ataca(Heroe const& h, string const& ataque, Villano const& v){
-        ...
-        throw invalid_argument("Villano inexistente");
-        ...
-        throw invalid_argument("Heroe inexistente");
-        ...
-        throw invalid_argument("No es su turno");
-        ...
-        throw invalid_argument("Ataque no aprendido");
-        ...
-    }
+        auto itV = villanos.find(v); // O(1)
+        if(itV == villanos.end()) // O(1)
+            throw invalid_argument("Villano inexistente");
 
+        auto itH = heroes.find(h); // O(1)
+        if(itH == heroes.end()) // O(1)
+            throw invalid_argument("Heroe inexistente");
+        
+        if (h != colaTurnos.front().first) // O(1)
+            throw invalid_argument("No es su turno");
+        
+        auto itA = itH->second.ataques.find(ataque); // O(log A)
+
+        if(itA == itH->second.ataques.end()) // O(1)
+            throw invalid_argument("Ataque no aprendido");
+
+        itV->second.vida -= itA->second;
+        itV->second.turnPosition->second -= itA->second;
+
+        bool battleResult = false;
+
+        if (itV->second.vida <= 0)
+        {
+            colaTurnos.erase(itV->second.turnPosition); // O(1)
+            villanos.erase(itV); // O(1)
+            battleResult = true;
+        }
+
+        colaTurnos.pop_front(); // O(1)
+        colaTurnos.push_back({h, itH->second.vida}); // O(1)
+        itH->second.turnPosition = prev(colaTurnos.end()); // O(1) al usar prev sobre una list
+
+        return battleResult;
+    }
 };
 
 
-bool resuelveCaso() { // No tacar nada de esta función!
+bool resuelveCaso() { // No tocar nada de esta función!
     string comando;
     cin >> comando;
     if (!cin) return false;
