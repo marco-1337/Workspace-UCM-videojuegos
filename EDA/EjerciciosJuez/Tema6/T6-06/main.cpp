@@ -6,24 +6,48 @@
 #include <iomanip>
 #include <fstream>
 
+#include "bintree_eda.h"
+
 using namespace std;
 
 // función que resuelve el problema
-TipoSolucion resolver(TipoDatos datos) {
-    
-    
+bool resolver(bintree<char> tree, int& weight) {
+    if (tree.empty())
+    {
+        return true;
+    }
+    else if (tree.left().empty() && tree.right().empty())
+    {
+        ++weight;
+        return true;
+    }
+    else
+    {
+        int weightIzq = 0, weightDer = 0;
+
+        bool izq = resolver(tree.left(), weightIzq);
+        bool der = resolver(tree.right(), weightDer);
+
+        weight += weightIzq + weightDer + 1;
+
+        return izq && der && weightIzq > weightDer;
+    }
 }
 
 // Resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
 void resuelveCaso() {
     // leer los datos de la entrada
+    bintree<char> tree;
+    tree = leerArbol('.');
     
-    
-    TipoSolucion sol = resolver(datos);
+    int aux = 0;
+
+    bool sol = resolver(tree, aux);
+
     // escribir sol
     
-    
+    cout << ((sol) ? "SI" : "NO") << "\n";
 }
 
 int main() {
