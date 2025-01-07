@@ -1,0 +1,1 @@
+Igual que el 03, simplemente mas exigente en cuanto a tiempo, 03 cumple exigencia.
