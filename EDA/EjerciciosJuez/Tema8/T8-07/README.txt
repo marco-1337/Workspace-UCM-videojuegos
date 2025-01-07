@@ -1,0 +1,1 @@
+Igual que el 6 pero mas exigente

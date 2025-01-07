@@ -6,6 +6,7 @@
 #include <stdexcept>
 
 #include<unordered_map>
+#include<map>
 #include <list>
 #include <vector>
 
@@ -25,11 +26,15 @@ class iPud
 private:
     unordered_map<cancion, datos_cancion> canciones;
 
-    unordered_map<cancion, pair<int, list<cancion>::iterator>> cancionesEnPlaylist;
-    list<cancion> playlist;
+    unordered_map<cancion, int> playlist;
+    map<int, cancion> playlistOrdered;
 
-    unordered_map<cancion, list<cancion>::iterator> cancionesEnHistorial;
-    list<cancion> historial;
+    int antiguedadPlaylist = 0;
+
+    unordered_map<cancion, int> historial;
+    map<int, cancion> historialOrdered;
+
+    int antiguedadHistorial = 0;
 
     int duracionPlaylist = 0;
 
@@ -49,44 +54,44 @@ public:
         if (it == canciones.end())
             throw invalid_argument("addToPlaylist");
 
-        playlist.push_back(song);
-        auto [itPlaylist, b] = cancionesEnPlaylist.insert({song, {it->second.duracion, --playlist.end()}});
+        auto [itPlaylist, b] = playlist.insert({song, ++antiguedadPlaylist});
 
-        if (!b)
+        if (b)
         {
-            playlist.erase(itPlaylist->second.second);
-            itPlaylist->second.second = --playlist.end();
-        }
-        else
             duracionPlaylist += it->second.duracion;
+            playlistOrdered[antiguedadPlaylist] = song;
+        }
     }
 
     cancion current()
     {
         if (playlist.size() == 0)
             throw invalid_argument("current");
-        return playlist.front();
+        return playlistOrdered.begin()->second;
     }
 
     void play()
     {
         if (playlist.size() > 0)
         {
-            cancion c = playlist.front();
-            auto itPlaylist = cancionesEnPlaylist.find(c); 
-            cancionesEnPlaylist.erase(itPlaylist);
-            playlist.pop_front();
+            auto songIt = playlistOrdered.begin();
 
-            duracionPlaylist -= itPlaylist->second.first;
+            playlist.erase(songIt->second);
+            duracionPlaylist -= canciones[songIt->second].duracion;
+            
+            int nuevaAntiguedad = ++antiguedadHistorial;
 
-            historial.push_back(c);
-            auto [itHistorial, b] = cancionesEnHistorial.insert({c, --historial.end()});
+            auto [itHistorial, b] = historial.insert({songIt->second, nuevaAntiguedad});
 
             if (!b)
             {
-                historial.erase(itHistorial->second);
-                itHistorial->second = --historial.end();
+                historialOrdered.erase(itHistorial->second);
+                itHistorial->second = nuevaAntiguedad;
             }
+
+            historialOrdered[nuevaAntiguedad] = songIt->second;
+
+            playlistOrdered.erase(songIt);
         }
     }
 
@@ -97,14 +102,31 @@ public:
 
     vector<cancion> recent(int n)
     {
-        vector<cancion> salida(n);
-        
-        auto it = historial.begin();
-        for (int i = n-1; i >= 0 && it != historial.end(); --i)
+        auto it = historialOrdered.end();
+        if (it == historialOrdered.begin())
         {
-            salida[i] = *it;
-            ++it;
+            return vector<cancion>(0);
         }
+        vector<cancion> salida(n);
+        --it;
+        bool notBegin = true;
+
+        int i;
+        for (i = 0; i < n && notBegin; ++i)
+        {
+            salida[i] = it->second;
+            if (it != historialOrdered.begin())
+            {
+                --it;
+            }
+            else
+            {
+                notBegin = false;
+            }
+        }
+
+        if (i < n)
+            salida.resize(i);
 
         return salida;
     }
@@ -115,23 +137,25 @@ public:
 
         if (it != canciones.end())
         {
-            auto itP = cancionesEnPlaylist.find(song);
-            auto itH = cancionesEnHistorial.find(song);
+            auto itP = playlist.find(song);
+            auto itH = historial.find(song);
 
-            if (itP != cancionesEnPlaylist.end())
-            {
-                playlist.erase(itP->second.second);
-                cancionesEnPlaylist.erase(itP);
+            if (itP != playlist.end())
+            {   
+                duracionPlaylist -= it->second.duracion;
+                playlistOrdered.erase(itP->second);
+                playlist.erase(itP);
             }
-            else if (itH != cancionesEnHistorial.end())
+            
+            if (itH != historial.end())
             {
-                historial.erase(itH->second);
-                cancionesEnHistorial.erase(itH);
+                historialOrdered.erase(itH->second);
+                historial.erase(itH);
             }
+            
             canciones.erase(it);
         }
     }
-
 };
 
 bool resuelve() {
