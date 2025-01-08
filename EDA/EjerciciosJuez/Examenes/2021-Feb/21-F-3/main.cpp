@@ -16,33 +16,36 @@ void resolver
 (
     vector<int>& sol, int n, int k, 
     const vector<vector<int>>& recaudacion, const vector<vector<bool>>& preferencias,
-    unordered_set<int>& usados
+    unordered_set<int>& usados, const vector<int>& mejorRecaudacion, int dinero, int& mejorSol
 )
 {
     for (int i = 0; i < n; ++i)
     {
         sol[k] = i;
+        dinero += recaudacion[i][k];
 
         if (!usados.contains(i))
         {
             usados.insert(i);
             if ((k == 0 || preferencias[i][sol[k-1]])) // es valida
             {
-                if (k == n-1)
+                if (k == n-1) // es solucion
                 {
-                    for (int item : sol)
+                    if (dinero > mejorSol)
                     {
-                        cout << item << " ";
+                        mejorSol = dinero;
                     }
-                    cout << "\n";
                 }
-                else
+                else if((mejorRecaudacion[n-1] - mejorRecaudacion[k]) + dinero > mejorSol)
                 {
-                    resolver(sol, n, k+1, recaudacion, preferencias, usados);
+                    resolver(sol, n, k+1, recaudacion, preferencias, usados, 
+                        mejorRecaudacion, dinero, mejorSol);
                 }
             }
             usados.erase(i);
         }
+
+        dinero -= recaudacion[i][k];
     }
     
 }
@@ -60,12 +63,21 @@ void resuelveCaso() {
 
     vector<vector<int>> recaudacion(n, vector<int>(n));
 
+    vector<int> mejorRecaudacion(n, 0);
+
     for (int i = 0; i < n; ++i)
     {
         for (int j = 0; j < n; ++j)
         {
             cin >> recaudacion[i][j];
+            if (recaudacion[i][j] > mejorRecaudacion[j])
+                mejorRecaudacion[j] = recaudacion[i][j];
         }
+    }
+
+    for (int i = 1; i < n; ++i)
+    {
+        mejorRecaudacion[i] += mejorRecaudacion[i-1];
     }
 
     vector<vector<bool>> preferencias(n, vector<bool>(n));
@@ -83,9 +95,15 @@ void resuelveCaso() {
 
     vector<int> sol(n);
     
-    resolver(sol, n, 0, recaudacion, preferencias, usados);
+    int mejorSol = -1;
+
+    resolver(sol, n, 0, recaudacion, preferencias, usados, mejorRecaudacion, 0, mejorSol);
+
     // escribir sol
-    
+    if (mejorSol == -1)
+        cout << "NEGOCIA CON LOS ARTISTAS\n";
+    else
+        cout << mejorSol << "\n";
     
 }
 
