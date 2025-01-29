@@ -26,8 +26,6 @@ include_directories(
     libs/misc/include
 
     libs/stb_image/include
-
-    ${CMAKE_SOURCE_DIR}/include
 )
 
 link_directories(
@@ -43,24 +41,27 @@ link_libraries(
 )
 else()
 
-# está lo de TPV1 no he mirado como es para linux así que si usas linux pues lo siento
-
 # En otros sistemas operativos utiliza find_package
 # para encontrar las bibliotecas instaladas aparte
 
-# find_package(SDL2 REQUIRED)
-# find_package(SDL2_image REQUIRED)
-# find_package(SDL2_ttf REQUIRED)
+    find_package(OpenGL REQUIRED)
+    find_package(GLEW REQUIRED)
+    find_package(glfw3 REQUIRED)
 
-include_directories(
-        # ${SDL2_INCLUDE_DIRS}
-        ${CMAKE_SOURCE_DIR}/include
+    include_directories(
+        ${GLEW_INCLUDE_DIRS}
+        ${GLFW_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIRS}
     )
-# link_libraries(${SDL2_LIBRARIES})
 
+    set(LIBS ${GLEW_LIBRARIES} ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES})
+    target_link_libraries(PlantillaIG ${LIBS})
+    
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+include_directories(
+        ${CMAKE_SOURCE_DIR}/include
+)
 
 add_executable(PlantillaIG
 # Archivo de código
@@ -77,4 +78,17 @@ add_executable(PlantillaIG
     src/Shader.cpp
     src/Texture.cpp
     src/Viewport.cpp
+)
+
+set_target_properties(PlantillaIG PROPERTIES 
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
+	RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug
+	RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release
+)
+
+set(DLL_DIR ${CMAKE_SOURCE_DIR}/dlls)
+
+add_custom_command(TARGET PlantillaIG POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${DLL_DIR} $<TARGET_FILE_DIR:PlantillaIG>
 )

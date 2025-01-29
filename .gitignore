@@ -19,6 +19,7 @@
 */Release/
 **/out/build/**/*
 
+
 # Archivos temporales de compilación
 *.obj
 *.exe
