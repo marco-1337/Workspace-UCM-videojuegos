@@ -50,4 +50,24 @@ public:
 	explicit RGBAxes(GLdouble l);
 };
 
+class SingleColorEntity : public Abs_Entity
+{
+public:
+	explicit SingleColorEntity(glm::dvec4 color = glm::dvec4(0.0, 0.0, 0.0, 1.0));
+	glm::dvec4 color() const;
+	void setColor(glm::dvec4 color);
+
+	void render(const glm::mat4& modelViewMat) const override;
+
+protected:
+	glm::dvec4 mColor;
+};
+
+// Apartado 4
+class RegularPolygon : public SingleColorEntity 
+{
+public:
+	explicit RegularPolygon(GLuint num, GLdouble r, glm::dvec4 color = glm::dvec4(0.0, 0.0, 0.0, 1.0));
+};
+
 #endif //_H_Entities_H_

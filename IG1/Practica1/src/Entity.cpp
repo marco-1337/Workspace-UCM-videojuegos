@@ -51,3 +51,41 @@ RGBAxes::RGBAxes(GLdouble l)
 	mMesh = Mesh::createRGBAxes(l);
 	load();
 }
+
+// Apartado 3
+
+SingleColorEntity::SingleColorEntity(glm::dvec4 color): mColor(color)
+{
+	mShader = Shader::get("simple");
+}
+
+glm::dvec4 
+SingleColorEntity::color() const { return mColor; }
+
+void
+SingleColorEntity::setColor(glm::dvec4 color) 
+{
+	mColor = color; 
+}
+
+
+void
+SingleColorEntity::render(mat4 const& modelViewMat) const
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->setUniform("color", static_cast<glm::vec4>(mColor));
+		mShader->use();
+		upload(aMat);
+		mMesh->render();
+	}
+}
+// !Apartado 3
+
+// Apartado 4
+
+RegularPolygon::RegularPolygon(GLuint num, GLdouble r, glm::dvec4 color): SingleColorEntity(color)
+{
+	mMesh = Mesh::generateRegularPolygon(num, r);
+	load();
+}

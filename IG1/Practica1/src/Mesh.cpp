@@ -111,3 +111,27 @@ Mesh::createRGBAxes(GLdouble l)
 
 	return mesh;
 }
+
+// Apartado 2
+Mesh*
+Mesh::generateRegularPolygon(GLuint num, GLdouble r)
+{
+	Mesh* mesh = new Mesh();
+
+	mesh->mPrimitive = GL_LINE_LOOP;
+
+	mesh->mNumVertices = num;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+	
+	GLdouble angleStep = radians(360.0) / num;
+
+	GLdouble angle = radians(90.0);
+
+	for (GLulong i = 0; i < num; ++i)
+	{
+		mesh->vVertices.emplace_back(r * cos(angle), r * sin(angle), 0.0);
+		angle += angleStep;
+	}
+
+	return mesh;
+}
