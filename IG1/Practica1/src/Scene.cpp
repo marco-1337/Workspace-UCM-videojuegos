@@ -5,31 +5,6 @@
 
 using namespace glm;
 
-void
-Scene::init()
-{
-	setGL(); // OpenGL settings
-
-	// allocate memory and load resources
-	// Lights
-	// Textures
-
-	// Graphics objects (entities) of the scene
-	gObjects.push_back(new RGBAxes(400.0));
-
-	// Apartado 5
-	gObjects.push_back(new RegularPolygon(3, 300.0, {1.0, 0.0, 1.0, 1.0}));
-	gObjects.push_back(new RegularPolygon(50, 300.0, {0.0, 1.0, 1.0, 1.0}));
-
-	// Apartado 6
-	//gObjects.push_back(new RGBTriangle(100.));
-
-	// Apartado 8
-	gObjects.push_back(new RGBRectangle(200., 100.));
-
-
-}
-
 Scene::~Scene()
 {
 	destroy();
@@ -85,4 +60,40 @@ Scene::render(Camera const& cam) const
 
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
+}
+
+void
+Scene1::init()
+{
+	setGL(); // OpenGL settings
+
+	// allocate memory and load resources
+	// Lights
+	// Textures
+
+	// Graphics objects (entities) of the scene
+	gObjects.push_back(new RGBAxes(400.0));
+
+	// Apartado 5
+	gObjects.push_back(new RegularPolygon(3, 300.0, {1.0, 0.0, 1.0, 1.0}));
+	gObjects.push_back(new RegularPolygon(50, 300.0, {0.0, 1.0, 1.0, 1.0}));
+}
+
+void
+Scene0::init()
+{
+	setGL(); // OpenGL settings
+
+	// allocate memory and load resources
+	// Lights
+	// Textures
+
+	// Graphics objects (entities) of the scene
+	gObjects.push_back(new RGBAxes(400.0));
+
+	// Apartado 6
+	gObjects.push_back(new RGBTriangle(100.));
+
+	// Apartado 8
+	gObjects.push_back(new RGBRectangle(200., 100.));
 }

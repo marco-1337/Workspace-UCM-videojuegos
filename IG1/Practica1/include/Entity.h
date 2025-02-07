@@ -74,7 +74,6 @@ class RGBTriangle : public EntityWithColors
 {
 public:
 	explicit RGBTriangle(GLdouble r);
-
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
@@ -82,6 +81,7 @@ class RGBRectangle : public EntityWithColors
 {
 public:
 	explicit RGBRectangle(GLdouble w, GLdouble h);
+	void render(const glm::mat4& modelViewMat) const override;
 };
 
 #endif //_H_Entities_H_
