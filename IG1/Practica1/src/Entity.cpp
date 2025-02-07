@@ -68,14 +68,13 @@ SingleColorEntity::setColor(glm::dvec4 color)
 	mColor = color; 
 }
 
-
 void
 SingleColorEntity::render(mat4 const& modelViewMat) const
 {
 	if (mMesh != nullptr) {
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
-		mShader->setUniform("color", static_cast<glm::vec4>(mColor));
 		mShader->use();
+		mShader->setUniform("color", static_cast<glm::vec4>(mColor));
 		upload(aMat);
 		mMesh->render();
 	}
@@ -83,9 +82,47 @@ SingleColorEntity::render(mat4 const& modelViewMat) const
 // !Apartado 3
 
 // Apartado 4
-
 RegularPolygon::RegularPolygon(GLuint num, GLdouble r, glm::dvec4 color): SingleColorEntity(color)
 {
 	mMesh = Mesh::generateRegularPolygon(num, r);
+	load();
+}
+
+// Apartado 6
+RGBTriangle::RGBTriangle(GLdouble r): EntityWithColors()
+{
+	mMesh = Mesh::generateRGBTriangle(r);
+	load();
+}
+
+// Apartado 7
+void
+RGBTriangle::render(const glm::mat4& modelViewMat) const
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mShader->setUniform("modelView", aMat);
+
+		glEnable(GL_CULL_FACE);
+
+			glCullFace(GL_FRONT);
+			//glPointSize(5.);
+			//glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			//glPointSize(1.);
+			mMesh->render();
+
+			glCullFace(GL_BACK);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			mMesh->render();
+
+		glDisable(GL_CULL_FACE);
+	}
+}
+
+RGBRectangle::RGBRectangle(GLdouble w, GLdouble h): EntityWithColors()
+{
+	mMesh = Mesh::generateRGBRectangle(w, h);
 	load();
 }

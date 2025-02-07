@@ -14,6 +14,13 @@ public:
 	// Apartado 2
 	static Mesh* generateRegularPolygon(GLuint num, GLdouble r);
 
+	// Apartado 6
+	static Mesh* generateRGBTriangle(GLdouble r);
+
+	// Apartado 8
+	static Mesh* generateRectangle(GLdouble w, GLdouble h);
+	static Mesh* generateRGBRectangle(GLdouble w, GLdouble h);
+
 	Mesh();
 	virtual ~Mesh();
 

@@ -70,4 +70,18 @@ public:
 	explicit RegularPolygon(GLuint num, GLdouble r, glm::dvec4 color = glm::dvec4(0.0, 0.0, 0.0, 1.0));
 };
 
+class RGBTriangle : public EntityWithColors
+{
+public:
+	explicit RGBTriangle(GLdouble r);
+
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+class RGBRectangle : public EntityWithColors
+{
+public:
+	explicit RGBRectangle(GLdouble w, GLdouble h);
+};
+
 #endif //_H_Entities_H_
