@@ -124,13 +124,14 @@ void
 RGBTriangle::update()
 {
 	glm::vec3 posOriginal = {mModelMat[3].x, mModelMat[3].y, mModelMat[3].z};
-	GLdouble modulo = sqrt(pow(posOriginal.x, 2) + pow(posOriginal.y, 2));
-	GLdouble angle = atan2(posOriginal.y, posOriginal.x) + glm::radians(1.0f);
-	glm::vec3 posNueva = glm::vec3(modulo*glm::cos(angle), modulo*glm::sin(angle), 0.0f);
+	GLdouble modulo = length(posOriginal);
+	GLdouble anguloT = atan2(posOriginal.y, posOriginal.x) + glm::radians(1.0f);
+	glm::vec3 posNueva = glm::vec3(modulo*glm::cos(anguloT), modulo*glm::sin(anguloT), 0.0f);
 
-	mModelMat = glm::translate(mModelMat, {-posOriginal.x, -posOriginal.y, -posOriginal.z});
-	mModelMat = glm::translate(mModelMat, posNueva);
-	mModelMat = glm::rotate(mModelMat, glm::radians(2.0f), glm::vec3(0, 0, -1));
+	_anguloRotacion += 0.1;
+
+	mModelMat = glm::translate(mat4(1), posNueva);
+	mModelMat = glm::rotate(mModelMat, _anguloRotacion, glm::vec3(0, 0, -1));
 }
 
 // Apartado 8

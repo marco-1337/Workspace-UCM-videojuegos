@@ -172,12 +172,8 @@ IG1App::key(unsigned int key)
 			mScenes[mCurrentScene]->update();
 			break;
 		default:
-			if (key >= '0' && key <= '9')
-			{
-				// Anidado para que el redisplay sea true en caso de cambio de escena
-				if (!changeScene(key - '0'))
+			if (key >= '0' && key <= '9' && !changeScene(key - '0'))
 					cout << "[NOTE] There is no scene " << char(key) << ".\n";
-			}
 			else
 				need_redisplay = false;
 			break;
@@ -241,6 +237,8 @@ IG1App::changeScene(size_t sceneNr)
 		mScenes[mCurrentScene]->unload();
 		mCurrentScene = sceneNr;
 		mScenes[mCurrentScene]->load();
+
+		mNeedsRedisplay = true;
 	}
 
 	return true;

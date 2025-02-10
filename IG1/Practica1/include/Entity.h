@@ -79,6 +79,8 @@ public:
 	explicit RGBTriangle(GLdouble r);
 	void render(const glm::mat4& modelViewMat) const override;
 	void update() override;
+private:
+	GLfloat _anguloRotacion = 0.;
 };
 
 class RGBRectangle : public EntityWithColors
