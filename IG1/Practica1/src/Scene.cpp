@@ -62,8 +62,19 @@ Scene::render(Camera const& cam) const
 		el->render(cam.viewMat());
 }
 
+// Apartado 12
 void
-Scene1::init()
+Scene::update()
+{
+	for (Abs_Entity* el : gObjects)
+	{
+		el->update();
+	}
+}
+
+// Apartado 9
+void
+Scene0::init()
 {
 	setGL(); // OpenGL settings
 
@@ -79,8 +90,9 @@ Scene1::init()
 	gObjects.push_back(new RegularPolygon(50, 300.0, {0.0, 1.0, 1.0, 1.0}));
 }
 
+// Apartado 9
 void
-Scene0::init()
+Scene1::init()
 {
 	setGL(); // OpenGL settings
 
@@ -91,9 +103,17 @@ Scene0::init()
 	// Graphics objects (entities) of the scene
 	gObjects.push_back(new RGBAxes(400.0));
 
-	// Apartado 6
-	gObjects.push_back(new RGBTriangle(100.));
-
 	// Apartado 8
-	gObjects.push_back(new RGBRectangle(200., 100.));
+	gObjects.push_back(new RGBRectangle(700., 350.));
+
+	// Apartado 10
+	GLdouble radius = 350.;
+	RGBTriangle* triangle = new RGBTriangle(50.);
+
+	//Apartado 11
+	triangle->setModelMat(glm::translate(triangle->modelMat(), {radius, 0., 0.}));
+
+	// Apartado 10
+	gObjects.push_back(triangle);
+	gObjects.push_back(new RegularPolygon(50, radius, {1.0, 1.0, 1.0, 1.0}));
 }

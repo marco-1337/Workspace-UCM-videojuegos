@@ -49,7 +49,6 @@ RGBAxes::RGBAxes(GLdouble l)
 {
 	mShader = Shader::get("vcolors");
 	mMesh = Mesh::createRGBAxes(l);
-	load();
 }
 
 // Apartado 3
@@ -85,14 +84,13 @@ SingleColorEntity::render(mat4 const& modelViewMat) const
 RegularPolygon::RegularPolygon(GLuint num, GLdouble r, glm::dvec4 color): SingleColorEntity(color)
 {
 	mMesh = Mesh::generateRegularPolygon(num, r);
-	load();
 }
 
 // Apartado 6
-RGBTriangle::RGBTriangle(GLdouble r): EntityWithColors()
+RGBTriangle::RGBTriangle(GLdouble r)
+: EntityWithColors()
 {
 	mMesh = Mesh::generateRGBTriangle(r);
-	load();
 }
 
 // Apartado 7
@@ -121,11 +119,24 @@ RGBTriangle::render(const glm::mat4& modelViewMat) const
 	}
 }
 
+// Apartado 13
+void 
+RGBTriangle::update()
+{
+	glm::vec3 posOriginal = {mModelMat[3].x, mModelMat[3].y, mModelMat[3].z};
+	GLdouble modulo = sqrt(pow(posOriginal.x, 2) + pow(posOriginal.y, 2));
+	GLdouble angle = atan2(posOriginal.y, posOriginal.x) + glm::radians(1.0f);
+	glm::vec3 posNueva = glm::vec3(modulo*glm::cos(angle), modulo*glm::sin(angle), 0.0f);
+
+	mModelMat = glm::translate(mModelMat, {-posOriginal.x, -posOriginal.y, -posOriginal.z});
+	mModelMat = glm::translate(mModelMat, posNueva);
+	mModelMat = glm::rotate(mModelMat, glm::radians(2.0f), glm::vec3(0, 0, -1));
+}
+
 // Apartado 8
 RGBRectangle::RGBRectangle(GLdouble w, GLdouble h): EntityWithColors()
 {
 	mMesh = Mesh::generateRGBRectangle(w, h);
-	load();
 }
 
 // Apartado 8

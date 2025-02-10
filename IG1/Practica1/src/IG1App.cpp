@@ -60,8 +60,11 @@ IG1App::init()
 
 	mCamera->set2D();
 
+	// Apartado 9
 	mScenes[0]->init();
 	mScenes[1]->init();
+
+	mScenes[0]->load();
 }
 
 void
@@ -164,9 +167,17 @@ IG1App::key(unsigned int key)
 		case 'o':
 			mCamera->set2D();
 			break;
+		// Apartado 12
+		case 'u':
+			mScenes[mCurrentScene]->update();
+			break;
 		default:
-			if (key >= '0' && key <= '9' && !changeScene(key - '0'))
-				cout << "[NOTE] There is no scene " << char(key) << ".\n";
+			if (key >= '0' && key <= '9')
+			{
+				// Anidado para que el redisplay sea true en caso de cambio de escena
+				if (!changeScene(key - '0'))
+					cout << "[NOTE] There is no scene " << char(key) << ".\n";
+			}
 			else
 				need_redisplay = false;
 			break;

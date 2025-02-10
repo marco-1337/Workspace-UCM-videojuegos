@@ -20,6 +20,9 @@ public:
 
 	virtual void render(const glm::mat4& modelViewMat) const = 0; // abstract method
 
+	// Apartado 12
+	virtual void update() {}
+
 	// modeling matrix
 	glm::mat4 const& modelMat() const { return mModelMat; };
 	void setModelMat(glm::mat4 const& aMat) { mModelMat = aMat; };
@@ -75,6 +78,7 @@ class RGBTriangle : public EntityWithColors
 public:
 	explicit RGBTriangle(GLdouble r);
 	void render(const glm::mat4& modelViewMat) const override;
+	void update() override;
 };
 
 class RGBRectangle : public EntityWithColors
