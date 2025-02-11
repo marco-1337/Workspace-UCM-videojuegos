@@ -33,13 +33,38 @@ IG1App::run() // enters the main event processing loop
 	// IG1App main loop
 	while (!glfwWindowShouldClose(mWindow)) {
 		// Redisplay the window if needed
-		if (mNeedsRedisplay) {
-			display();
-			mNeedsRedisplay = false;
+
+
+
+		if (mUpdateEnabled)
+		{
+			// Dejo esto aquí porque los update no tienen por que tener la responsabilidad
+			// de actualizar el display.
+			// Uno asume que como se está actualizando se requiere un refresco de lo visible por si acaso
+
+			if (mNextUpdate - glfwGetTime() <= 0.0)
+			{
+				display();
+
+				mNextUpdate = glfwGetTime() + FRAME_DURATION;
+				mScenes[mCurrentScene]->update();			
+				
+				// Como este método también tiene en cuenta la recepción de eventos además del tiempo
+				// es posible que la duración sea menor a la restante
+				glfwWaitEventsTimeout(mNextUpdate - glfwGetTime());
+			}
+		}
+		else
+		{
+			if (mNeedsRedisplay) {
+				display();
+				mNeedsRedisplay = false;
+			}
+
+			// Stop and wait for new events
+			glfwWaitEvents();
 		}
 
-		// Stop and wait for new events
-		glfwWaitEvents();
 	}
 
 	destroy();
@@ -170,6 +195,9 @@ IG1App::key(unsigned int key)
 		// Apartado 12
 		case 'u':
 			mScenes[mCurrentScene]->update();
+			break;
+		case 'U':
+			mUpdateEnabled = !mUpdateEnabled;
 			break;
 		default:
 			if (key >= '0' && key <= '9' && !changeScene(key - '0'))

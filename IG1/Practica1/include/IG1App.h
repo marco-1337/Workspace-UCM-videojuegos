@@ -32,6 +32,12 @@ public:
 	void close(); // the application
 
 protected:
+
+	// Apartado 14
+	static constexpr GLdouble FRAME_DURATION = 1/30.;
+	GLboolean mUpdateEnabled = false;
+	GLdouble mNextUpdate = 0.0;
+
 	IG1App() = default;
 	~IG1App() { close(); };
 

@@ -117,3 +117,4 @@ Scene1::init()
 	gObjects.push_back(triangle);
 	gObjects.push_back(new RegularPolygon(50, radius, {1.0, 1.0, 1.0, 1.0}));
 }
+
