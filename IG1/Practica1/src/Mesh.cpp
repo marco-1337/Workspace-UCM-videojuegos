@@ -189,3 +189,113 @@ Mesh::generateRGBRectangle(GLdouble w, GLdouble h)
 
 	return mesh;
 }
+
+//Apartado 15
+Mesh* 
+Mesh::generateCube(GLdouble length)
+{
+	Mesh* mesh = new Mesh();
+
+	// Se que se puede hacer con triangles y es mas practico para desarrollar
+	// lo he hecho con triangle strip simplemente como reto personal
+
+	// En caso de querer hacer triangles simplemente habria que ir haciendo cada cara
+	// dando una cantidad total de 36 vertices 
+	mesh->mPrimitive = GL_TRIANGLES;
+
+	GLdouble halfLength = length/2.;
+
+	vec3 oneDown = {halfLength, -halfLength, halfLength};
+	vec3 twoDown = {-halfLength, -halfLength, halfLength};;
+	vec3 threeDown = {-halfLength, -halfLength, -halfLength};;
+	vec3 fourDown = {halfLength, -halfLength, -halfLength};;
+
+	vec3 oneUp = {halfLength, halfLength, halfLength};
+	vec3 twoUp = {-halfLength, halfLength, halfLength};;
+	vec3 threeUp = {-halfLength, halfLength, -halfLength};;
+	vec3 fourUp = {halfLength, halfLength, -halfLength};;
+
+	mesh->mNumVertices = 36;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+
+	// Cara inferior
+	mesh->vVertices.emplace_back(oneDown);
+	mesh->vVertices.emplace_back(twoDown);
+	mesh->vVertices.emplace_back(threeDown);
+
+	mesh->vVertices.emplace_back(oneDown);
+	mesh->vVertices.emplace_back(threeDown);
+	mesh->vVertices.emplace_back(fourDown);
+
+	// Cara superior
+
+	mesh->vVertices.emplace_back(oneUp);
+	mesh->vVertices.emplace_back(threeUp);
+	mesh->vVertices.emplace_back(twoUp);
+
+	mesh->vVertices.emplace_back(oneUp);
+	mesh->vVertices.emplace_back(fourUp);
+	mesh->vVertices.emplace_back(threeUp);
+
+	// Cara frontal
+	mesh->vVertices.emplace_back(oneDown);
+	mesh->vVertices.emplace_back(oneUp);
+	mesh->vVertices.emplace_back(twoUp);
+
+	mesh->vVertices.emplace_back(oneDown);
+	mesh->vVertices.emplace_back(twoUp);
+	mesh->vVertices.emplace_back(twoDown);
+
+	// Cara trasera
+
+	mesh->vVertices.emplace_back(threeDown);
+	mesh->vVertices.emplace_back(threeUp);
+	mesh->vVertices.emplace_back(fourUp);
+
+	mesh->vVertices.emplace_back(threeDown);
+	mesh->vVertices.emplace_back(fourUp);
+	mesh->vVertices.emplace_back(fourDown);
+
+	// Cara derecha
+
+	mesh->vVertices.emplace_back(oneDown);
+	mesh->vVertices.emplace_back(fourUp);
+	mesh->vVertices.emplace_back(oneUp);
+
+	mesh->vVertices.emplace_back(oneDown);
+	mesh->vVertices.emplace_back(fourDown);
+	mesh->vVertices.emplace_back(fourUp);
+
+	// Cara izquierda
+
+	mesh->vVertices.emplace_back(threeDown);
+	mesh->vVertices.emplace_back(twoUp);
+	mesh->vVertices.emplace_back(threeUp);
+
+	mesh->vVertices.emplace_back(threeDown);
+	mesh->vVertices.emplace_back(twoDown);
+	mesh->vVertices.emplace_back(twoUp);
+
+	return mesh;
+}
+
+void setFacesColor(vector<glm::vec4>& vColors, const vec4& color)
+{
+	for (int i = 0; i < 12; i++)
+		vColors.emplace_back(color);
+}
+
+//Apartado 16
+Mesh* 
+Mesh::generateRGBCube(GLdouble length)
+{
+	Mesh* mesh = generateCube(length);
+
+	mesh->vColors.reserve(mesh->mNumVertices);
+
+	setFacesColor(mesh->vColors, {0.0, 0.0, 1.0, 1.0});
+	setFacesColor(mesh->vColors, {1.0, 0.0, 0.0, 1.0});
+	setFacesColor(mesh->vColors, {0.0, 1.0, 0.0, 1.0});
+
+	return mesh;
+}

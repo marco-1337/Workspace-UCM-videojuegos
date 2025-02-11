@@ -90,4 +90,22 @@ public:
 	void render(const glm::mat4& modelViewMat) const override;
 };
 
+// Apartado 15
+class Cube : public SingleColorEntity
+{
+public:
+	explicit Cube(GLdouble length);
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+// Apartado 16
+class RGBCube : public EntityWithColors
+{
+public:
+	explicit RGBCube(GLdouble length);
+	void render(const glm::mat4& modelViewMat) const override;
+};
+
+// Apartado 17: Primero rota, luego mueve
+
 #endif //_H_Entities_H_

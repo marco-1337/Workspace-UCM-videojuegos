@@ -118,3 +118,18 @@ Scene1::init()
 	gObjects.push_back(new RegularPolygon(50, radius, {1.0, 1.0, 1.0, 1.0}));
 }
 
+void
+Scene2::init()
+{
+	setGL(); // OpenGL settings
+
+	// allocate memory and load resources
+	// Lights
+	// Textures
+
+	// Graphics objects (entities) of the scene
+	gObjects.push_back(new RGBAxes(400.0));
+
+	gObjects.push_back(new Cube(300.));
+	gObjects.push_back(new RGBCube(350.));
+}

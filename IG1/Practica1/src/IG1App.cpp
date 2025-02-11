@@ -34,16 +34,14 @@ IG1App::run() // enters the main event processing loop
 	while (!glfwWindowShouldClose(mWindow)) {
 		// Redisplay the window if needed
 
-
-
+		// Apartado 14
 		if (mUpdateEnabled)
 		{
-			// Dejo esto aquí porque los update no tienen por que tener la responsabilidad
-			// de actualizar el display.
-			// Uno asume que como se está actualizando se requiere un refresco de lo visible por si acaso
-
 			if (mNextUpdate - glfwGetTime() <= 0.0)
 			{
+				// Dejo esto aquí porque los update no tienen por que tener la responsabilidad
+				// de actualizar el display.
+				// Uno asume que como se está actualizando se requiere un refresco de lo visible por si acaso
 				display();
 
 				mNextUpdate = glfwGetTime() + FRAME_DURATION;
@@ -82,12 +80,14 @@ IG1App::init()
 	mCamera = new Camera(mViewPort);
 	mScenes.push_back(new Scene0);
 	mScenes.push_back(new Scene1);
+	mScenes.push_back(new Scene2);
 
 	mCamera->set2D();
 
 	// Apartado 9
 	mScenes[0]->init();
 	mScenes[1]->init();
+	mScenes[2]->init();
 
 	mScenes[0]->load();
 }

@@ -18,6 +18,10 @@ public:
 	// Apartado 8
 	static Mesh* generateRectangle(GLdouble w, GLdouble h);
 	static Mesh* generateRGBRectangle(GLdouble w, GLdouble h);
+	// Apartado 15
+	static Mesh* generateCube(GLdouble length);
+	// Apartado 16
+	static Mesh* generateRGBCube(GLdouble length);
 
 	Mesh();
 	virtual ~Mesh();
