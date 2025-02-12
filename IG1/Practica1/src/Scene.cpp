@@ -130,6 +130,6 @@ Scene2::init()
 	// Graphics objects (entities) of the scene
 	gObjects.push_back(new RGBAxes(400.0));
 
-	gObjects.push_back(new Cube(300.));
+	gObjects.push_back(new Cube(350.));
 	gObjects.push_back(new RGBCube(350.));
 }

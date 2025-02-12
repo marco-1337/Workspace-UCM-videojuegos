@@ -196,7 +196,7 @@ Cube::render(const glm::mat4& modelViewMat) const
 }
 
 //Apartado 16
-RGBCube::RGBCube(GLdouble length)
+RGBCube::RGBCube(GLdouble length): length(length)
 {
 	mMesh = Mesh::generateRGBCube(length);
 }
@@ -215,5 +215,23 @@ RGBCube::render(const glm::mat4& modelViewMat) const
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 			mMesh->render();
 		glDisable(GL_CULL_FACE);
+	}
+}
+
+// Apartado 17
+void 
+RGBCube::update()
+{
+	if (rotaciones.x < glm::half_pi<float>())
+	{
+		mModelMat = glm::rotate(mat4(1), rotaciones.x, glm::vec3(1, 0, 0));
+		rotaciones.x = clamp<float>(rotaciones.x + 0.1, 0.0, glm::half_pi<float>());
+		mModelMat = glm::translate(mModelMat, {length/2, length/2, length/2});
+	}
+	else if (rotaciones.z < glm::half_pi<float>())
+	{
+		mModelMat = glm::rotate(mat4(1), rotaciones.z, glm::vec3(0, 0, 1));
+		rotaciones.z = clamp<float>(rotaciones.z + 0.1, 0.0, glm::half_pi<float>());
+		mModelMat = glm::translate(mModelMat, {length/2, -length/2, length/2});
 	}
 }

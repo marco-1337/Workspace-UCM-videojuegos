@@ -230,13 +230,13 @@ Mesh::generateCube(GLdouble length)
 	// Cara superior
 
 	mesh->vVertices.emplace_back(oneUp);
-	mesh->vVertices.emplace_back(threeUp);
+	mesh->vVertices.emplace_back(fourUp);
 	mesh->vVertices.emplace_back(twoUp);
 
-	mesh->vVertices.emplace_back(oneUp);
-	mesh->vVertices.emplace_back(fourUp);
 	mesh->vVertices.emplace_back(threeUp);
-
+	mesh->vVertices.emplace_back(twoUp);
+	mesh->vVertices.emplace_back(fourUp);
+	
 	// Cara frontal
 	mesh->vVertices.emplace_back(oneDown);
 	mesh->vVertices.emplace_back(oneUp);

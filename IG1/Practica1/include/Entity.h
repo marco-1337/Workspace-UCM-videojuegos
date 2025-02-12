@@ -104,8 +104,11 @@ class RGBCube : public EntityWithColors
 public:
 	explicit RGBCube(GLdouble length);
 	void render(const glm::mat4& modelViewMat) const override;
+
+	// Apartado 17
+	void update() override;
+private:
+	GLdouble length;
+	glm::fvec3 rotaciones = {0., 0., 0.};
 };
-
-// Apartado 17: Primero rota, luego mueve
-
 #endif //_H_Entities_H_
