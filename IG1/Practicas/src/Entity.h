@@ -120,16 +120,17 @@ public:
 	explicit Ground(GLdouble w, GLdouble h);
 };
 
-/*
+
 class EntityWithTexture: public Abs_Entity
 {
 protected:
 	Texture* mTexture;
-	GLboolean mModulate = false;
+	GLboolean mModulate; // indica si modulará la textura con el color de los vértices
 public:
-	explicit EntityWithTexture();	
+	explicit EntityWithTexture(Texture* texture, GLboolean modulate = false);
+	void render (const glm::mat4& modelViewMat) const override;
 };
-*/
+
 
 #endif //_H_Entities_H_
 

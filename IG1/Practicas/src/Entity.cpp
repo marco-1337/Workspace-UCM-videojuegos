@@ -52,7 +52,6 @@ RGBAxes::RGBAxes(GLdouble l)
 }
 
 // Apartado 3
-
 SingleColorEntity::SingleColorEntity(glm::dvec4 color): mColor(color)
 {
 	mShader = Shader::get("simple");
@@ -255,4 +254,27 @@ Ground::Ground(GLdouble w, GLdouble h)
 {
 	mMesh = Mesh::generateRectangle(w, h);
 	mModelMat = glm::rotate(mModelMat, glm::half_pi<GLfloat>(), glm::vec3(-1, 0, 0));
+}
+
+// Apartado 19
+EntityWithTexture::EntityWithTexture(Texture* texture, GLboolean modulate)
+{
+	mTexture = texture;
+	mModulate = modulate;
+	mShader = Shader::get("texture");
+}
+// TO DO: Añadir en mMesh load la carga de las coordenadas de texturas
+//			Activar y desactivar el uso de texturas en scene (en las diapos está esto)
+void
+EntityWithTexture::render (const glm::mat4& modelViewMat) const 
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mShader->setUniform("modulate", static_cast<bool>(mModulate));
+		upload(aMat);
+		if (mTexture != nullptr) mTexture->bind();
+		mMesh->render();
+		if (mTexture != nullptr) mTexture->unbind();
+	}
 }
