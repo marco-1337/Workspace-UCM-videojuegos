@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.15...3.30)
 
 # Proyecto en C++
-project(IG1_Practica1 VERSION 1.0 LANGUAGES CXX)
+project(IG1_Practicas VERSION 1.0 LANGUAGES CXX)
 
 # Selecciona la versión C++20 del estándar (sin extensiones)
 set(CMAKE_CXX_STANDARD 20)
@@ -50,15 +50,15 @@ else()
     )
 
     set(LIBS ${GLEW_LIBRARIES} ${GLFW_LIBRARIES} ${OPENGL_LIBRARIES})
-    target_link_libraries(IG1_Practica1 ${LIBS})
+    target_link_libraries(IG1_Practicas ${LIBS})
     
 endif()
 
 include_directories(
-        ${CMAKE_SOURCE_DIR}/include
+        ${CMAKE_SOURCE_DIR}/src
 )
 
-add_executable(IG1_Practica1
+add_executable(IG1_Practicas
 # Archivo de código
     src/main.cpp
 
@@ -73,9 +73,14 @@ add_executable(IG1_Practica1
     src/Shader.cpp
     src/Texture.cpp
     src/Viewport.cpp
+
+    src/Scene0.cpp
+    src/Scene1.cpp
+    src/Scene2.cpp
+    src/Scene3.cpp
 )
 
-set_target_properties(IG1_Practica1 PROPERTIES 
+set_target_properties(IG1_Practicas PROPERTIES 
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
 	RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}/bin/Debug
 	RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release
@@ -83,7 +88,7 @@ set_target_properties(IG1_Practica1 PROPERTIES
 
 set(DLL_DIR ${CMAKE_SOURCE_DIR}/dlls)
 
-add_custom_command(TARGET IG1_Practica1 POST_BUILD
+add_custom_command(TARGET IG1_Practicas POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${DLL_DIR} $<TARGET_FILE_DIR:IG1_Practica1>
+    ${DLL_DIR} $<TARGET_FILE_DIR:IG1_Practicas>
 )

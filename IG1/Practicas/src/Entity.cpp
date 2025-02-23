@@ -199,6 +199,7 @@ Cube::render(const glm::mat4& modelViewMat) const
 RGBCube::RGBCube(GLdouble length): length(length)
 {
 	mMesh = Mesh::generateRGBCube(length);
+	mModelMat = glm::translate(mModelMat, {length/2, length/2, -length/2});
 }
 
 //Apartado 16
@@ -222,16 +223,36 @@ RGBCube::render(const glm::mat4& modelViewMat) const
 void 
 RGBCube::update()
 {
-	if (rotaciones.x < glm::half_pi<float>())
+	if (_rotaciones.x < glm::pi<GLfloat>())
 	{
-		mModelMat = glm::rotate(mat4(1), rotaciones.x, glm::vec3(1, 0, 0));
-		rotaciones.x = clamp<float>(rotaciones.x + 0.1, 0.0, glm::half_pi<float>());
-		mModelMat = glm::translate(mModelMat, {length/2, length/2, length/2});
+		_rotaciones.x = clamp<GLfloat>(_rotaciones.x + 0.04, 0.0, glm::pi<GLfloat>());
+		mModelMat = glm::rotate(mat4(1), _rotaciones.x, glm::vec3(1, 0, 0));
+		mModelMat = glm::translate(mModelMat, {length/2, length/2, -length/2});
 	}
-	else if (rotaciones.z < glm::half_pi<float>())
+	else if (_rotaciones.z < glm::pi<GLfloat>())
 	{
-		mModelMat = glm::rotate(mat4(1), rotaciones.z, glm::vec3(0, 0, 1));
-		rotaciones.z = clamp<float>(rotaciones.z + 0.1, 0.0, glm::half_pi<float>());
-		mModelMat = glm::translate(mModelMat, {length/2, -length/2, length/2});
+		mModelMat = glm::rotate(mat4(1), glm::pi<GLfloat>(), glm::vec3(1, 0, 0));
+
+		_rotaciones.z = clamp<GLfloat>(_rotaciones.z + 0.04, 0.0, glm::pi<GLfloat>());
+		mModelMat = glm::rotate(mModelMat, _rotaciones.z, glm::vec3(0, 0, -1));
+		mModelMat = glm::translate(mModelMat, {length/2, length/2, -length/2});
 	}
+	else if (_rotaciones.y < glm::pi<GLfloat>())
+	{
+		mModelMat = glm::rotate(mat4(1), glm::pi<GLfloat>(), glm::vec3(1, 0, 0));
+		mModelMat = glm::rotate(mModelMat, glm::pi<GLfloat>(), glm::vec3(0, 0, -1));
+
+		_rotaciones.y = clamp<GLfloat>(_rotaciones.y + 0.04, 0.0, glm::pi<GLfloat>());
+		mModelMat = glm::rotate(mModelMat, _rotaciones.y, glm::vec3(0, 1, 0));
+		mModelMat = glm::translate(mModelMat, {length/2, length/2, -length/2});
+	}
+	else 
+		_rotaciones = {0., 0., 0.};
+}
+
+// Apartado 18
+Ground::Ground(GLdouble w, GLdouble h)
+{
+	mMesh = Mesh::generateRectangle(w, h);
+	mModelMat = glm::rotate(mModelMat, glm::half_pi<GLfloat>(), glm::vec3(-1, 0, 0));
 }

@@ -6,6 +6,7 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "Texture.h"
 
 class Abs_Entity // abstract class
 {
@@ -109,6 +110,25 @@ public:
 	void update() override;
 private:
 	GLdouble length;
-	glm::fvec3 rotaciones = {0., 0., 0.};
+	glm::fvec3 _rotaciones = {0., 0., 0.};
 };
+
+// Apartado 18
+class Ground: public EntityWithColors
+{
+public:
+	explicit Ground(GLdouble w, GLdouble h);
+};
+
+class EntityWithTexture: public Abs_Entity
+{
+protected:
+	Texture* mTexture;
+	GLboolean mModulate;
+public:
+	
+};
+
 #endif //_H_Entities_H_
+
+// Apartado 19
