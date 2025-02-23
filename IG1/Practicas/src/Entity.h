@@ -120,14 +120,16 @@ public:
 	explicit Ground(GLdouble w, GLdouble h);
 };
 
+/*
 class EntityWithTexture: public Abs_Entity
 {
 protected:
 	Texture* mTexture;
-	GLboolean mModulate;
+	GLboolean mModulate = false;
 public:
-	
+	explicit EntityWithTexture();	
 };
+*/
 
 #endif //_H_Entities_H_
 
