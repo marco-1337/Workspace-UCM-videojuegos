@@ -2,6 +2,8 @@
 
 #include "Image.h"
 
+constexpr const char* TEXTURES_ROOT = "../assets/images/";
+
 Texture::~Texture()
 {
 	if (mId != 0)
@@ -34,7 +36,7 @@ Texture::load(const std::string& name, GLubyte alpha)
 		init();
 
 	Image image;
-	image.load(name);
+	image.load(TEXTURES_ROOT + name);
 
 	if (alpha != 255)
 		image.setAlpha(alpha);

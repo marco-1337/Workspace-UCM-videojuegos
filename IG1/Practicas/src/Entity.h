@@ -113,14 +113,7 @@ private:
 	glm::fvec3 _rotaciones = {0., 0., 0.};
 };
 
-// Apartado 18
-class Ground: public EntityWithColors
-{
-public:
-	explicit Ground(GLdouble w, GLdouble h);
-};
-
-
+// Apartado 19
 class EntityWithTexture: public Abs_Entity
 {
 protected:
@@ -129,6 +122,13 @@ protected:
 public:
 	explicit EntityWithTexture(Texture* texture, GLboolean modulate = false);
 	void render (const glm::mat4& modelViewMat) const override;
+};
+
+// Apartado 18
+class Ground: public EntityWithTexture
+{
+public:
+	explicit Ground(GLdouble w, GLdouble h, Texture* texture, GLboolean modulate);
 };
 
 
