@@ -315,18 +315,66 @@ Mesh::generateRGBCube(GLdouble length)
 	return mesh;
 }
 
-// Apartado 20 
+// Apartado 20 y 21
 Mesh*
-Mesh::generateRectangleTexCor(GLdouble w, GLdouble h)
+Mesh::generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw, GLuint rh)
 {
 	Mesh* mesh = generateRectangle(w, h);
 
 	mesh->vTexCoords.reserve(mesh->mNumVertices);
 
-	mesh->vTexCoords.emplace_back(1., 1.);
-	mesh->vTexCoords.emplace_back(0., 1.);
-	mesh->vTexCoords.emplace_back(1., 0.);
+	// Multiplicar las coordenadas respectivas para que se haga tiling según rw y rh
+	mesh->vTexCoords.emplace_back(1. * rw, 1.* rh);
+	mesh->vTexCoords.emplace_back(0., 1.* rh);
+	mesh->vTexCoords.emplace_back(1. * rw, 0.);
 	mesh->vTexCoords.emplace_back(0., 0.);
+
+	return mesh;
+}
+
+// Apartado 22
+// COMENTAR
+Mesh* 
+Mesh::generateBoxOutline(GLdouble length)
+{
+	GLdouble halfL = length/2;
+
+	Mesh* mesh = new Mesh();
+
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+
+	mesh->mNumVertices = 10;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+
+	mesh->vVertices.emplace_back(-halfL, -halfL, halfL);
+	mesh->vVertices.emplace_back(-halfL, halfL, halfL);
+	mesh->vVertices.emplace_back(halfL, -halfL, halfL);
+	mesh->vVertices.emplace_back(halfL, halfL, halfL);
+	mesh->vVertices.emplace_back(halfL, -halfL, -halfL);
+	mesh->vVertices.emplace_back(halfL, halfL, -halfL);
+	mesh->vVertices.emplace_back(-halfL, -halfL, -halfL);
+	mesh->vVertices.emplace_back(-halfL, halfL, -halfL);
+	mesh->vVertices.emplace_back(-halfL, -halfL, halfL);
+	mesh->vVertices.emplace_back(-halfL, halfL, halfL);
+
+	return mesh;
+}
+
+// Apartado 24
+// COMENTAR
+Mesh*
+Mesh::generateBoxOutlineTextCor(GLdouble length)
+{
+	Mesh* mesh = generateBoxOutline(length);
+
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+
+	// 5 veces por cada cara, todas las caras tienen la textura de la misma forma, son una serie
+	for (GLint i = 0; i < 5; ++i)
+	{
+		mesh->vTexCoords.emplace_back(0.+i, 0.);
+		mesh->vTexCoords.emplace_back(0.+i, 1.);
+	}
 
 	return mesh;
 }

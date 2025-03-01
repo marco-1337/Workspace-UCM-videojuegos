@@ -128,9 +128,18 @@ public:
 class Ground: public EntityWithTexture
 {
 public:
-	explicit Ground(GLdouble w, GLdouble h, Texture* texture, GLboolean modulate);
+	explicit Ground(GLdouble w, GLdouble h, Texture* texture, GLboolean modulate = false, GLint rw = 1, GLint rh = 1);
 };
 
+// Apartado 23
+class BoxOutline: public EntityWithTexture
+{
+public:
+	explicit BoxOutline(GLdouble length, Texture* texture, Texture* inwardsTexture, GLboolean modulate = false);
+	void render (const glm::mat4& modelViewMat) const override;
+private:
+	Texture* mInwardsTexture = nullptr; 
+};
 
 #endif //_H_Entities_H_
 

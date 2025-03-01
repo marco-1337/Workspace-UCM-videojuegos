@@ -23,8 +23,13 @@ public:
 	// Apartado 16
 	static Mesh* generateRGBCube(GLdouble length);
 
-	// Apartado 20
-	static Mesh* generateRectangleTexCor(GLdouble w, GLdouble h);
+	// Apartado 20 y 21
+	static Mesh* generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw = 1, GLuint rh = 1);
+
+	// Apartado 22
+	static Mesh* generateBoxOutline(GLdouble length);
+	// Apartado 23
+	static Mesh* generateBoxOutlineTextCor(GLdouble length);
 
 	Mesh();
 	virtual ~Mesh();
@@ -37,7 +42,7 @@ public:
 	GLuint size() const { return mNumVertices; }; // number of elements
 	std::vector<glm::vec3> const& vertices() const { return vVertices; };
 	std::vector<glm::vec4> const& colors() const { return vColors; };
-	std::vector<glm::dvec2> const& texCoords() const { return vTexCoords; }
+	std::vector<glm::vec2> const& texCoords() const { return vTexCoords; }
 
 	void load();
 	void unload();
@@ -48,7 +53,7 @@ protected:
 	GLuint mNumVertices = 0; // number of elements ( = vVertices.size())
 	std::vector<glm::vec3> vVertices; // vertex array
 	std::vector<glm::vec4> vColors;   // color array
-	std::vector<glm::dvec2> vTexCoords; //texture array
+	std::vector<glm::vec2> vTexCoords; //texture array
 	virtual void draw() const;
 
 	GLuint mVAO;  // vertex array object

@@ -100,7 +100,7 @@ RGBTriangle::render(const glm::mat4& modelViewMat) const
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
 		mShader->setUniform("modelView", aMat);
-
+		upload(aMat);
 		glEnable(GL_CULL_FACE);
 
 			glCullFace(GL_FRONT);
@@ -147,7 +147,7 @@ RGBRectangle::render(const glm::mat4& modelViewMat) const
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
 		mShader->setUniform("modelView", aMat);
-
+		upload(aMat);
 		glEnable(GL_CULL_FACE);
 
 			glCullFace(GL_FRONT);
@@ -180,7 +180,7 @@ Cube::render(const glm::mat4& modelViewMat) const
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
 		mShader->setUniform("color", static_cast<glm::vec4>(mColor));
-
+		upload(aMat);
 		glEnable(GL_CULL_FACE);
 
 			glCullFace(GL_FRONT);
@@ -209,7 +209,7 @@ RGBCube::render(const glm::mat4& modelViewMat) const
 		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
 		mShader->use();
 		mShader->setUniform("modelView", aMat);
-
+		upload(aMat);
 		glEnable(GL_CULL_FACE);
 			glCullFace(GL_BACK);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -250,9 +250,11 @@ RGBCube::update()
 }
 
 // Apartado 18
-Ground::Ground(GLdouble w, GLdouble h, Texture* texture, GLboolean modulate): EntityWithTexture(texture, modulate)
+// COMENTAR
+Ground::Ground(GLdouble w, GLdouble h, Texture* texture, GLboolean modulate, GLint rw, GLint rh)
+: EntityWithTexture(texture, modulate)
 {
-	mMesh = Mesh::generateRectangleTexCor(w, h);
+	mMesh = Mesh::generateRectangleTexCor(w, h, rw, rh);
 	mModelMat = glm::rotate(mModelMat, glm::half_pi<GLfloat>(), glm::vec3(-1, 0, 0));
 }
 
@@ -263,7 +265,6 @@ EntityWithTexture::EntityWithTexture(Texture* texture, GLboolean modulate)
 	mModulate = modulate;
 	mShader = Shader::get("texture");
 }
-
 void
 EntityWithTexture::render (const glm::mat4& modelViewMat) const 
 {
@@ -275,5 +276,42 @@ EntityWithTexture::render (const glm::mat4& modelViewMat) const
 		if (mTexture != nullptr) mTexture->bind();
 		mMesh->render();
 		if (mTexture != nullptr) mTexture->unbind();
+	}
+}
+
+// Apartado 23
+BoxOutline::BoxOutline(GLdouble length, Texture* texture, Texture* inwardsTexture, GLboolean modulate)
+: EntityWithTexture(texture, modulate), mInwardsTexture(inwardsTexture)
+{
+	mMesh = Mesh::generateBoxOutlineTextCor(length);
+}
+
+// Apartado 25
+void
+BoxOutline::render (const glm::mat4& modelViewMat) const 
+{
+	if (mMesh != nullptr) {
+		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+		mShader->use();
+		mShader->setUniform("modulate", static_cast<bool>(mModulate));
+		upload(aMat);
+
+		glEnable(GL_CULL_FACE);
+
+			glCullFace(GL_FRONT);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+			if (mTexture != nullptr) mTexture->bind();
+			mMesh->render();
+			if (mTexture != nullptr) mTexture->unbind();
+
+			glCullFace(GL_BACK);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+			if (mInwardsTexture != nullptr) mInwardsTexture->bind();
+			mMesh->render();
+			if (mInwardsTexture != nullptr) mInwardsTexture->unbind();
+		
+		glDisable(GL_CULL_FACE);
 	}
 }
