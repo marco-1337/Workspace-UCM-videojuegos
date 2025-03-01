@@ -29,8 +29,8 @@ public:
 	void setModelMat(glm::mat4 const& aMat) { mModelMat = aMat; };
 
 	// load or unload entity data into the GPU
-	void load();
-	void unload();
+	virtual void load();
+	virtual void unload();
 
 protected:
 	Mesh* mMesh = nullptr; // the mesh
@@ -109,7 +109,7 @@ public:
 	// Apartado 17
 	void update() override;
 private:
-	GLdouble length;
+	GLdouble _length;
 	glm::fvec3 _rotaciones = {0., 0., 0.};
 };
 
@@ -137,10 +137,45 @@ class BoxOutline: public EntityWithTexture
 public:
 	explicit BoxOutline(GLdouble length, Texture* texture, Texture* inwardsTexture, GLboolean modulate = false);
 	void render (const glm::mat4& modelViewMat) const override;
-private:
+protected:
 	Texture* mInwardsTexture = nullptr; 
 };
 
-#endif //_H_Entities_H_
+// Apartado 27
+class Star3D: public EntityWithTexture
+{
+public:
+	explicit Star3D(GLdouble re, GLuint np, GLdouble h, Texture* texture, GLboolean modulate = false);
+	void render (const glm::mat4& modelViewMat) const override;
+	// Apartado 28
+	void update() override;
+private:
+	GLfloat _yRotation = 0.0;
+	GLfloat _zRotation = 0.0;
+	static constexpr GLfloat ROTATION_SPEED = 0.05;
+};
 
-// Apartado 19
+// Apartado 30
+
+class Box: public BoxOutline
+{
+public:
+	explicit Box(GLdouble length, Texture* texture, Texture* inwardsTexture, GLboolean modulate = false);
+	~Box();
+	void render (const glm::mat4& modelViewMat) const override;
+	void update() override;
+
+	void load() override;
+	void unload() override;
+private:
+	GLdouble _length;
+	GLint _dir = -1;
+	GLfloat _openAngle = 0.0;
+	Mesh* mBottomMesh;
+	glm::mat4 mBottomModelMat;
+	Mesh* mTopMesh;
+	glm::mat4 mTopModelMat;
+
+	static constexpr GLfloat OPEN_ANGLE_SPEED = 0.05;
+};
+#endif //_H_Entities_H_

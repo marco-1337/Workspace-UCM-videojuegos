@@ -91,6 +91,10 @@ Mesh::render() const
 
 	glBindVertexArray(mVAO);
 	draw();
+
+	// Restablecer a LINE para setear un tipo de renderizado de poligonos por defecto
+	// si quieres un renderizado especifico, lo implementas en tu entidad
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 Mesh*
@@ -374,6 +378,122 @@ Mesh::generateBoxOutlineTextCor(GLdouble length)
 	{
 		mesh->vTexCoords.emplace_back(0.+i, 0.);
 		mesh->vTexCoords.emplace_back(0.+i, 1.);
+	}
+
+	return mesh;
+}
+
+// Apartado 26
+// COMENTAR
+Mesh* 
+Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h)
+{
+	Mesh* mesh = new Mesh();
+
+	mesh->mPrimitive = GL_TRIANGLE_FAN;
+
+	// 2 extras, 1 para el inicial y otro para el final que es el único redundante
+	mesh->mNumVertices = (np*2) +2;
+	mesh->vVertices.reserve(mesh->mNumVertices);
+	
+	GLdouble ri = re/2;
+
+	GLdouble angleStep = radians(360.0) / (np*2);
+	GLdouble angle = radians(90.0);
+
+	mesh->vVertices.emplace_back(0.0, 0.0, 0.0);
+
+	for (GLulong i = 0; i < np; ++i)
+	{
+		mesh->vVertices.emplace_back(re * cos(angle), re * sin(angle), h);
+		angle += angleStep;
+		mesh->vVertices.emplace_back(ri * cos(angle), ri * sin(angle), h);
+		angle += angleStep;
+	}
+
+	// Cerrar la estrella
+	mesh->vVertices.emplace_back(re * cos(angle), re * sin(angle), h);
+
+	return mesh;
+}
+
+void getPointInSquarePerimeter(GLdouble progress, glm::vec2& currentTexPoint)
+{
+
+	GLdouble currentProgress = progress;
+
+	while (currentProgress != 0.0f)
+	{
+		if (currentTexPoint.x == 0.0f && currentTexPoint.y >= 0.0f && currentTexPoint.y < 1.0f)
+		{
+			currentTexPoint.y += progress;
+
+			if (currentTexPoint.y <= 1.0f)
+				currentProgress = 0.0f;
+			else
+			{
+				currentProgress = currentProgress - (currentTexPoint.y - 1.0f);
+				currentTexPoint.y = 1.0f;
+			}
+		}
+		else if (currentTexPoint.x >= 0.0f && currentTexPoint.x < 1.0f && currentTexPoint.y == 1.0f)
+		{
+			currentTexPoint.x += progress;
+			if (currentTexPoint.x <= 1.0f)
+				currentProgress = 0.0f;
+			else
+			{
+				currentProgress = currentProgress - (currentTexPoint.x - 1.0f);
+				currentTexPoint.x = 1.0f;
+			}
+		}
+		else if (currentTexPoint.x == 1.0f && currentTexPoint.y <= 1.0f && currentTexPoint.y > 0.0f)
+		{
+			currentTexPoint.y -= progress;
+			if (currentTexPoint.y >= 0.0f)
+				currentProgress = 0.0f;
+			else
+			{
+				currentProgress =  -(currentTexPoint.y + 1.0f);
+				currentTexPoint.y = 0.0f;
+			}
+		}
+		else if (currentTexPoint.x > 0.0f && currentTexPoint.y == 0.0f)
+		{
+			currentTexPoint.x -= progress;
+			if (currentTexPoint.x >= 0.0f)
+				currentProgress = 0.0f;
+			else
+			{
+				currentProgress = -(currentTexPoint.x + 1.0f);
+				currentTexPoint.x = 0.0f;
+			}
+		}
+	}
+}
+
+// Apartado 29
+// COMENTAR
+Mesh* 
+Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h)
+{
+	Mesh* mesh = generateStar3D(re, np, h);
+
+	mesh->mPrimitive = GL_TRIANGLE_FAN;
+
+	mesh->vTexCoords.reserve(mesh->mNumVertices);
+
+	mesh->vTexCoords.emplace_back(0.5, 0.5);
+
+	GLdouble progress = 4.0 / (np*2);
+
+	glm::vec2 currentTexPoint = {0.5, 1.0};
+
+
+	for (GLint i = 0; i <= np*2; ++i)
+	{
+		mesh->vTexCoords.emplace_back(currentTexPoint);
+		getPointInSquarePerimeter(progress, currentTexPoint);
 	}
 
 	return mesh;
