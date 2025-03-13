@@ -328,6 +328,7 @@ Mesh::generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw, GLuint rh)
 	mesh->vTexCoords.reserve(mesh->mNumVertices);
 
 	// Multiplicar las coordenadas respectivas para que se haga tiling según rw y rh
+	// El tiling ya está activado
 	mesh->vTexCoords.emplace_back(1. * rw, 1.* rh);
 	mesh->vTexCoords.emplace_back(0., 1.* rh);
 	mesh->vTexCoords.emplace_back(1. * rw, 0.);
@@ -337,7 +338,6 @@ Mesh::generateRectangleTexCor(GLdouble w, GLdouble h, GLuint rw, GLuint rh)
 }
 
 // Apartado 22
-// COMENTAR
 Mesh* 
 Mesh::generateBoxOutline(GLdouble length)
 {
@@ -350,6 +350,8 @@ Mesh::generateBoxOutline(GLdouble length)
 	mesh->mNumVertices = 10;
 	mesh->vVertices.reserve(mesh->mNumVertices);
 
+	// Se añaden los vertices de tal forma que las caras se generan en una "línea"
+	// como cerrando un loop
 	mesh->vVertices.emplace_back(-halfL, -halfL, halfL);
 	mesh->vVertices.emplace_back(-halfL, halfL, halfL);
 	mesh->vVertices.emplace_back(halfL, -halfL, halfL);
@@ -374,6 +376,7 @@ Mesh::generateBoxOutlineTextCor(GLdouble length)
 	mesh->vTexCoords.reserve(mesh->mNumVertices);
 
 	// 5 veces por cada cara, todas las caras tienen la textura de la misma forma, son una serie
+	// Si desdoblamos la malla es secuencial
 	for (GLint i = 0; i < 5; ++i)
 	{
 		mesh->vTexCoords.emplace_back(0.+i, 0.);
@@ -384,7 +387,6 @@ Mesh::generateBoxOutlineTextCor(GLdouble length)
 }
 
 // Apartado 26
-// COMENTAR
 Mesh* 
 Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h)
 {
@@ -396,13 +398,19 @@ Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h)
 	mesh->mNumVertices = (np*2) +2;
 	mesh->vVertices.reserve(mesh->mNumVertices);
 	
+	// Radio de punta interna
 	GLdouble ri = re/2;
 
+	// Calcula segun las puntas cuanto avanzar, teniendo en cuenta que por punta hay 2 vertices (grande y pequeño)
 	GLdouble angleStep = radians(360.0) / (np*2);
+
+	// Angulo donde se va a colocar el punto, empieza arriba
 	GLdouble angle = radians(90.0);
 
+	// Añade vértice ancla de triangle fan en 0,0,0
 	mesh->vVertices.emplace_back(0.0, 0.0, 0.0);
 
+	// Cada paso pinta la punta externa y la interna
 	for (GLulong i = 0; i < np; ++i)
 	{
 		mesh->vVertices.emplace_back(re * cos(angle), re * sin(angle), h);
@@ -417,9 +425,16 @@ Mesh::generateStar3D(GLdouble re, GLuint np, GLdouble h)
 	return mesh;
 }
 
+/// @brief Devuelve el punto siguiente de un cuadrado según en que punto del perimetro en el que se está
+/// 	   y lo que se debe avanzar si pensamos en el perimetro como en un numero que va del 0 al 4,
+///		   empieza en 0,0 y avanza en el perimetro yendo hacia arriba primero hasta volver a 0,0. \n
+///		
+///		   Se asume que el punto introducido está en el perimetro de un cuadrado de lado 1. Si se mete cualquier
+///		   otro punto el resultado es desconocido
+/// @param progress la cantidad de perimetro a avanzar, está entre 0 y 4
+/// @param currentTexPoint el punto del perimetro en el que se está
 void getPointInSquarePerimeter(GLdouble progress, glm::vec2& currentTexPoint)
 {
-
 	GLdouble currentProgress = progress;
 
 	while (currentProgress != 0.0f)
@@ -473,7 +488,8 @@ void getPointInSquarePerimeter(GLdouble progress, glm::vec2& currentTexPoint)
 }
 
 // Apartado 29
-// COMENTAR
+/// genera las coordenadas de textura de la estrella, seccionando la textura en "triangulos",
+/// como si se cortara una tarta/pizza
 Mesh* 
 Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h)
 {
@@ -483,13 +499,16 @@ Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h)
 
 	mesh->vTexCoords.reserve(mesh->mNumVertices);
 
+	// Vertice inicial en el centro para que se desdoble como un "cono"
 	mesh->vTexCoords.emplace_back(0.5, 0.5);
 
+	// Si el perimetro mide 4, segun las puntas que tengamos se obtiene la cantidad de perimetro que cubre de un vertice
+	// a otro de la estrella
 	GLdouble progress = 4.0 / (np*2);
 
 	glm::vec2 currentTexPoint = {0.5, 1.0};
 
-
+	// Avanza uno extra para cerrar
 	for (GLint i = 0; i <= np*2; ++i)
 	{
 		mesh->vTexCoords.emplace_back(currentTexPoint);

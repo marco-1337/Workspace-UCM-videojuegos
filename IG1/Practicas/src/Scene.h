@@ -21,11 +21,11 @@ public:
 
 	virtual void init() = 0;
 
-	void render(Camera const& cam) const;
-	virtual void update();
+	virtual void render(Camera const& cam) const;
+	void update();
 
 	// load or unload scene data into the GPU
-	void load();
+	virtual void load();
 	void unload();
 
 protected:

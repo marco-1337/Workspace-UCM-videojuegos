@@ -50,14 +50,14 @@ Scene::setGL()
 	glClearColor(0.6, 0.7, 0.8, 1.0);
 	
 	glEnable(GL_DEPTH_TEST);          // enable Depth test
-	glEnable(GL_TEXTURE_2D); // Activar las texturas en la escena
+	//glEnable(GL_TEXTURE_2D); // Activar las texturas en la escena
 }
 void
 Scene::resetGL()
 {
 	glClearColor(.0, .0, .0, .0); // background color (alpha=1 -> opaque)
 	glDisable(GL_DEPTH_TEST);     // disable Depth test
-	glDisable(GL_TEXTURE_2D); // Desactivar las texturas en la escena
+	//glDisable(GL_TEXTURE_2D); // Desactivar las texturas en la escena
 }
 
 void

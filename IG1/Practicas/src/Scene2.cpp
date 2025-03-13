@@ -1,5 +1,8 @@
 #include "Scene2.h"
 
+#include "Cube.h"
+#include "RGBCube.h"
+
 void
 Scene2::init()
 {

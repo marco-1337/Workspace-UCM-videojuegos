@@ -31,6 +31,9 @@ public:
 	void run();   // the main event processing loop
 	void close(); // the application
 
+	GLint getWinWidth() { return mWinW; }
+	GLint getWinHeight() { return mWinH; }
+
 protected:
 
 	// Apartado 14

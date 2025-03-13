@@ -56,6 +56,7 @@ endif()
 
 include_directories(
         ${CMAKE_SOURCE_DIR}/src
+        ${CMAKE_SOURCE_DIR}/src/Entities/
 )
 
 add_executable(IG1_Practicas
@@ -63,7 +64,7 @@ add_executable(IG1_Practicas
     src/main.cpp
 
     src/Camera.cpp
-    src/Entity.cpp
+    src/Entities/Entity.cpp
     src/IG1App.cpp
     src/Image.cpp
     src/Light.cpp
@@ -73,6 +74,23 @@ add_executable(IG1_Practicas
     src/Shader.cpp
     src/Texture.cpp
     src/Viewport.cpp
+
+    #Práctica 1
+    src/Entities/SingleColorEntity.cpp
+    src/Entities/RegularPolygon.cpp
+    src/Entities/RGBTriangle.cpp
+    src/Entities/RGBRectangle.cpp
+    src/Entities/Cube.cpp
+    src/Entities/RGBCube.cpp
+
+    #práctica 2
+    src/Entities/EntityWithTexture.cpp
+    src/Entities/Ground.cpp
+    src/Entities/BoxOutline.cpp
+    src/Entities/Star3D.cpp
+    src/Entities/Box.cpp
+    src/Entities/GlassParapet.cpp
+    src/Entities/Photo.cpp
 
     src/Scene0.cpp
     src/Scene1.cpp

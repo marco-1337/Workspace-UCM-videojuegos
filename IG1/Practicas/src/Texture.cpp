@@ -61,6 +61,22 @@ Texture::load(const std::string& name, GLubyte alpha)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+void 
+Texture::loadColorBuffer(GLsizei width, GLsizei height, GLuint buffer)
+{
+	// Si la textura no tiene ID asignado se llama a init para asignarle uno
+	if (mId == 0)
+		init();
+	
+	// marca la textura como activa para que las operaciones siguientes se hagan sobre ella
+	glBindTexture(GL_TEXTURE_2D, mId);
+		glReadBuffer(buffer);
+		// Copia 
+		glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, width, height, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+
 void
 Texture::setWrap(GLuint wp) // GL_REPEAT, GL_CLAMP_TO_EDGE, ...
 {

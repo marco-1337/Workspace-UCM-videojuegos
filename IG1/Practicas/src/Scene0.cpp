@@ -1,4 +1,5 @@
 #include "Scene0.h"
+#include "RegularPolygon.h"
 
 // Apartado 9
 void

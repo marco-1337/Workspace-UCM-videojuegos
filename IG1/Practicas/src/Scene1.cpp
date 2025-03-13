@@ -3,6 +3,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include "RegularPolygon.h"
+#include "RGBTriangle.h"
+#include "RGBRectangle.h"
+
 // Apartado 9
 void
 Scene1::init()
