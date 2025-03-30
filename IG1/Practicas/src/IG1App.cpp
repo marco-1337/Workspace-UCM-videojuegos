@@ -206,6 +206,28 @@ IG1App::key(unsigned int key)
 		case 'U':
 			mUpdateEnabled = !mUpdateEnabled;
 			break;
+		// Apartado 40
+		case 'a' :
+			mCamera->moveLR(-10);
+			break;
+		case 'd' :
+			mCamera->moveLR(10);
+			break;
+		case 's' :
+			mCamera->moveFB(-10);
+			break;
+		case 'w' :
+			mCamera->moveFB(10);
+			break;
+		case 'S' :
+			mCamera->moveUD(-10);
+			break;	
+		case 'W' :
+			mCamera->moveUD(10);
+			break;	
+		case 'p' :
+			mCamera->changePrj();
+			break;
 		default:
 			if (key >= '0' && key <= '9' && !changeScene(key - '0'))
 					cout << "[NOTE] There is no scene " << char(key) << ".\n";

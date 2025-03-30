@@ -1,8 +1,11 @@
 #include "Shader.h"
 #include "Camera.h"
 
+#include <IG1App.h>
+
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_access.hpp>
 
 using namespace glm;
 
@@ -28,6 +31,7 @@ void
 Camera::setVM()
 {
 	mViewMat = lookAt(mEye, mLook, mUp); // glm::lookAt defines the view matrix
+	setAxes();
 }
 
 void
@@ -52,6 +56,7 @@ void
 Camera::pitch(GLdouble a)
 {
 	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(1.0, 0, 0));
+	setAxes();
 	// glm::rotate returns mViewMat * rotationMatrix
 }
 
@@ -59,6 +64,7 @@ void
 Camera::yaw(GLdouble a)
 {
 	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(0, 1.0, 0));
+	setAxes();
 	// glm::rotate returns mViewMat * rotationMatrix
 }
 
@@ -66,7 +72,39 @@ void
 Camera::roll(GLdouble a)
 {
 	mViewMat = rotate(mViewMat, glm::radians(a), glm::dvec3(0, 0, 1.0));
+	setAxes();
 	// glm::rotate returns mViewMat * rotationMatrix
+}
+
+void
+Camera::moveLR(GLfloat cs)
+{
+	mEye += (normalize(mRight) * cs);
+	mLook += (normalize(mRight) * cs);
+	setVM();
+}
+
+void
+Camera::moveFB(GLfloat cs)
+{
+	// ¡Hay que invertir f porque apunta al revés! 
+	mEye += (normalize(mFront) * cs);
+	mLook += (normalize(mFront) * cs);
+	setVM();
+}
+
+void 
+Camera::moveUD(GLfloat cs) 
+{
+	mEye += (normalize(mUpward) * cs);
+	mLook += (normalize(mUpward) * cs);
+	setVM();
+}
+
+void
+Camera::changePrj() {
+	bOrto = !bOrto;
+	setPM();
 }
 
 void
@@ -100,6 +138,24 @@ Camera::setPM()
 		                 mFarVal);
 		// glm::ortho defines the orthogonal projection matrix
 	}
+	else {
+		
+		GLfloat yTop = mNearVal * tan(glm::half_pi<GLfloat>() / 2.0);
+		GLfloat yBot = -yTop;
+		GLfloat xRight = yTop * ((GLfloat)IG1App::s_ig1app.getWinWidth()/(GLfloat)IG1App::s_ig1app.getWinHeight());
+		GLfloat xLeft = -xRight;
+
+		GLfloat ratio;
+
+		mProjMat = frustum(
+			xLeft * mScaleFact,
+			xRight * mScaleFact,
+			yBot * mScaleFact,
+			yTop * mScaleFact,
+			mNearVal,
+			mFarVal);
+		
+	}
 }
 
 void
@@ -114,4 +170,14 @@ Camera::upload() const
 	mViewPort->upload();
 	uploadVM();
 	uploadPM();
+}
+
+// Apartado 38
+/// @brief se asigna a cada eje la fila de la matriz de vista
+void
+Camera::setAxes() 
+{
+	mRight = row(mViewMat, 0);
+	mUpward = row(mViewMat, 1);
+	mFront = - row(mViewMat, 2);
 }
