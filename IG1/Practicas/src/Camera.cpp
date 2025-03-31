@@ -7,6 +7,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
+#include <iostream>
+
 using namespace glm;
 
 Camera::Camera(Viewport* vp)
@@ -37,18 +39,36 @@ Camera::setVM()
 void
 Camera::set2D()
 {
-	mEye = {0, 0, 500};
-	mLook = {0, 0, 0};
+	mEye = {0, 0, 1500};
+	mLook = {0, 0, 1000};
 	mUp = {0, 1, 0};
+
+	// Pone el angulo como el que da actualmente look respecto a eye con el origen
+	GLfloat x = mLook.x - mEye.x;
+	GLfloat z = mLook.z - mEye.z;
+	mAng = degrees(glm::atan(z, x));
+
+	// Ajusta la x y la z al angulo tal y como se haría en orbit para que esté coherente
+	mEye.x = mLook.x + cos(radians(mAng));
+	mEye.z = mLook.z - sin(radians(mAng));
+
 	setVM();
 }
 
 void
 Camera::set3D()
 {
-	mEye = {500, 500, 500};
-	mLook = {0, 10, 0};
+	mEye = {1000, 900, 1000};
+	mLook = {0, 0, 0};
 	mUp = {0, 1, 0};
+
+	// Pone el angulo como el que da actualmente look respecto a eye con el origen
+	mAng = -degrees(glm::atan(mEye.z, mEye.x));
+
+	// Ajusta la x y la z al angulo tal y como se haría en orbit para que esté coherente
+	mEye.x = mLook.x + cos(radians(mAng)) * mRadio;
+	mEye.z = mLook.z - sin(radians(mAng)) * mRadio;
+
 	setVM();
 }
 
@@ -102,9 +122,58 @@ Camera::moveUD(GLfloat cs)
 }
 
 void
-Camera::changePrj() {
+Camera::changePrj() 
+{
 	bOrto = !bOrto;
 	setPM();
+}
+
+// Tanto para este como para el resto hace falta actualizar tanto up como look con el giro sobre
+// el eje correspondiente
+// 
+// si no se actualza up en pitch por ejemplo, cuando la camara apunta perpendicular al plano XZ
+// Up y Forward son linealmente dependientes porque están en la misma recta por lo que
+// la cámara le da un telele
+void Camera::pitchReal(GLfloat cs)
+{
+	mat4 rot = glm::rotate(mat4(1.0), glm::radians(cs), mRight);
+	mLook = dvec3(dvec4(mFront, 0.0) * rot) + mEye;
+	mUp = dvec3(dvec4(mUp, 0.0) * rot);
+	setVM();
+}
+
+void Camera::yawReal(GLfloat cs)
+{
+	mat4 rot = glm::rotate(mat4(1.0), glm::radians(cs), mUpward);
+	mLook = dvec3(dvec4(mFront, 0.0) * rot) + mEye;
+	mUp = dvec3(dvec4(mUp, 0.0) * rot);
+	setVM();
+}
+
+void Camera::rollReal(GLfloat cs)
+{
+	mat4 rot = glm::rotate(mat4(1.0), glm::radians(cs), mFront);
+	mLook = dvec3(dvec4(mFront, 0.0) * rot) + mEye;
+	mUp = dvec3(dvec4(mUp, 0.0) * rot);
+	setVM();
+}
+
+void Camera::orbit(GLdouble incAng, GLdouble incY)
+{
+	mAng += incAng;
+	mEye.x = mLook.x + cos(radians(mAng)) * mRadio;
+	mEye.z = mLook.z - sin(radians(mAng)) * mRadio;
+	mEye.y += incY;
+	setVM();
+}
+
+void Camera::setCenital()
+{
+	mEye = {0, 1000, 0};
+	mLook = {0, 0, 0};
+	mUp = {0, 0, -1};
+	
+	setVM();
 }
 
 void
@@ -145,13 +214,16 @@ Camera::setPM()
 		GLfloat xRight = yTop * ((GLfloat)IG1App::s_ig1app.getWinWidth()/(GLfloat)IG1App::s_ig1app.getWinHeight());
 		GLfloat xLeft = -xRight;
 
-		GLfloat ratio;
+		// Ajuste manual para que lo que está en el punto mLook se vea con la menor deformacion posible
+		GLfloat ratio = mNearVal / mFront.length();
 
+		// Las multiplicaciones afectan unicamente al marco de la matriz de proyeccion, 
+		// cuando mas grande es el marco menos zoom y viceversa
 		mProjMat = frustum(
-			xLeft * mScaleFact,
-			xRight * mScaleFact,
-			yBot * mScaleFact,
-			yTop * mScaleFact,
+			xLeft * mScaleFact * ratio,
+			xRight * mScaleFact * ratio,
+			yBot * mScaleFact * ratio,
+			yTop * mScaleFact * ratio,
 			mNearVal,
 			mFarVal);
 		

@@ -31,7 +31,7 @@ public:
 	void run();   // the main event processing loop
 	void close(); // the application
 
-	GLint getWinWidth() { return mWinW; }
+	GLint getWinWidth() { return (m2vistas) ? mWinW/2 : mWinW; }
 	GLint getWinHeight() { return mWinH; }
 
 protected:
@@ -41,6 +41,18 @@ protected:
 	GLboolean mUpdateEnabled = false;
 	GLdouble mNextUpdate = 0.0;
 
+	// Apartado 50
+	glm::dvec2 mMouseCoord;
+	GLint mMouseButt = -1;
+
+	static void s_mouse( GLFWwindow * win, GLint button, GLint action, GLint mods);
+	static void s_motion( GLFWwindow * win, GLdouble x, GLdouble y);
+	static void s_mouseWheel ( GLFWwindow * win, GLdouble dx, GLdouble dy);
+
+	void mouse( GLint button, GLint action, GLint mods);
+	void motion( GLdouble x, GLdouble y);
+	void mouseWheel ( GLdouble dx, GLdouble dy );
+
 	IG1App() = default;
 	~IG1App() { close(); };
 
@@ -49,6 +61,12 @@ protected:
 	void destroy();
 
 	void display() const;                      // the scene
+
+	/// @brief activa o desactiva viewport con 2 vistas
+	GLboolean m2vistas = false;
+	/// @brief Renderiza dos vistas, cada una en una mitad de la ventana
+	void display2V() const;
+
 	void resize(int newWidth, int newHeight);  // the viewport (without changing the scale)
 	void key(unsigned int codepoint); // keypress event
 	void specialkey(int key, int scancode, int action, int mods); // special keypress event

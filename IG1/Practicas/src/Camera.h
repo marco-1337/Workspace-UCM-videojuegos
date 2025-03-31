@@ -18,6 +18,7 @@ public:
 	// view matrix
 	glm::dmat4 const& viewMat() const { return mViewMat; };
 
+	// Apartado 47
 	void set2D();
 	void set3D();
 
@@ -40,6 +41,23 @@ public:
 	/// @brief cambia la proyección
 	void changePrj();
 
+	/// @brief (Cabeceo) rotación sobre el eje x de la matriz de vista
+	/// @param cs angulo a añadir a la rotacion actual
+	void pitchReal(GLfloat cs);
+	/// @brief (Guiñada) rotación sobre el eje y de la matriz de vista
+	/// @param cs angulo a añadir a la rotacion actual
+	void yawReal(GLfloat cs);
+	/// @brief (Alabeo) rotación sobre el eje z de la matriz de vista
+	/// @param cs angulo a añadir a la rotacion actual
+	void rollReal(GLfloat cs);
+
+	/// @brief Orbita en el plano XZ alrededor un cilindro cuyo eje central es el mLook en el vector (0, 1, 0)
+	/// @param incAng angulo de orbitado sobre el plano XZ a sumar al giro guardado
+	/// @param incY movimiento en el eje y de la cámara
+	void orbit (GLdouble incAng, GLdouble incY);
+
+	void setCenital();
+
 	// projection matrix
 	glm::dmat4 const& projMat() const { return mProjMat; };
 
@@ -60,6 +78,8 @@ protected:
 
 	glm::vec3 mRight, mUpward, mFront;
 
+	GLdouble mAng, mRadio = 1000;
+
 	glm::dmat4 mViewMat;   // view matrix = inverse of modeling matrix
 	void uploadVM() const; // transfers viewMat to the GPU
 
@@ -68,12 +88,13 @@ protected:
 
 	GLdouble xRight, xLeft, yTop, yBot;     // size of scene visible area
 	GLdouble mNearVal = 1, mFarVal = 10000; // view volume
-	GLdouble mScaleFact = 16/9;                // scale factor
+	GLdouble mScaleFact = 1.0;              // scale factor
 	bool bOrto = true;                      // orthogonal or perspective projection
 
 	Viewport* mViewPort; // the viewport
 
 	void setVM();
+	// Apartado 42 y 44
 	void setPM();
 };
 

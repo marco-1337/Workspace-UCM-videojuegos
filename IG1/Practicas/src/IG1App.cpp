@@ -97,6 +97,12 @@ IG1App::init()
 	}
 
 	mScenes[0]->load();
+
+	// Apartado 50
+	glfwSetMouseButtonCallback(mWindow, s_mouse);
+	glfwSetCursorPosCallback (mWindow, s_motion);
+	glfwSetScrollCallback (mWindow, s_mouseWheel);
+
 }
 
 void
@@ -163,9 +169,44 @@ IG1App::display() const
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clears the back buffer
 
-	mScenes[mCurrentScene]->render(*mCamera); // uploads the viewport and camera to the GPU
+	if (m2vistas)
+		display2V();
+	else
+		mScenes[mCurrentScene]->render(*mCamera); // uploads the viewport and camera to the GPU
 
 	glfwSwapBuffers(mWindow); // swaps the front and back buffer
+}
+
+void
+IG1App::display2V() const
+{
+	// para renderizar las vistas utilizamos una cámara
+	// auxiliar:
+	Camera auxCam = *mCamera; // copiando mCamera
+	// el puerto de vista queda compartido (se copia el
+	// puntero)
+	// lo copiamos en una var. aux.
+	Viewport auxVP = *mViewPort;
+	// el tamaño de los 4 puertos de vista es el mismo,
+	// lo configuramos
+	mViewPort->setSize(mWinW / 2, mWinH);
+	// igual que en resize, para que no cambie la escala,
+	// tenemos que cambiar el tamaño de la ventana de vista
+	// de la cámara
+	auxCam.setSize(mViewPort->width(), mViewPort ->height());
+
+	// Vista 3D
+	mViewPort ->setPos(0, 0);
+	auxCam.set3D();
+	mScenes[mCurrentScene]->render(auxCam);
+
+	// Vista cenital
+	mViewPort ->setPos(mWinW / 2, 0);
+	auxCam. setCenital ();
+	mScenes[mCurrentScene]->render(auxCam);
+
+	// Máquina de estados pensamiento
+	*mViewPort = auxVP; // * restaurar el puerto de vista
 }
 
 void
@@ -208,25 +249,50 @@ IG1App::key(unsigned int key)
 			break;
 		// Apartado 40
 		case 'a' :
-			mCamera->moveLR(-10);
+			mCamera->moveLR(-5);
 			break;
 		case 'd' :
-			mCamera->moveLR(10);
+			mCamera->moveLR(5);
 			break;
 		case 's' :
-			mCamera->moveFB(-10);
+			mCamera->moveFB(-5);
 			break;
 		case 'w' :
-			mCamera->moveFB(10);
+			mCamera->moveFB(5);
 			break;
 		case 'S' :
-			mCamera->moveUD(-10);
+			mCamera->moveUD(-5);
 			break;	
 		case 'W' :
-			mCamera->moveUD(10);
+			mCamera->moveUD(5);
 			break;	
+		// Apartado 41
 		case 'p' :
 			mCamera->changePrj();
+			break;
+		case 'P' :
+			mCamera->changePrj();
+			break;
+		// Apartado 43
+		case 'm' :
+			mCamera->orbit(2, 2);
+			break;
+		case 'M' :
+			mCamera->orbit(-2, -2);
+			break;
+		case 'n' :
+			mCamera->orbit(2, 0.0);
+			break;
+		case 'N' :
+			mCamera->orbit(-2, 0.0);
+			break;
+		// Apartado 48
+		case 'z' :
+			mCamera->setCenital();
+			break;
+		// Apartado 49
+		case 'k' :
+			m2vistas = !m2vistas;
 			break;
 		default:
 			if (key >= '0' && key <= '9' && !changeScene(key - '0'))
@@ -257,21 +323,21 @@ IG1App::specialkey(int key, int scancode, int action, int mods)
 			break;
 		case GLFW_KEY_RIGHT:
 			if (mods == GLFW_MOD_CONTROL)
-				mCamera->pitch(-1); // rotates -1 on the X axis
+				mCamera->rollReal(-1); // rotates -1 on the Z axis
 			else
-				mCamera->pitch(1); // rotates 1 on the X axis
+				mCamera->yawReal(1); // rotates 1 on the Y axis
 			break;
 		case GLFW_KEY_LEFT:
 			if (mods == GLFW_MOD_CONTROL)
-				mCamera->yaw(1); // rotates 1 on the Y axis
+				mCamera->rollReal(1); // rotates 1 on the Z axis
 			else
-				mCamera->yaw(-1); // rotate -1 on the Y axis
+				mCamera->yawReal(-1); // rotate -1 on the Y axis
 			break;
 		case GLFW_KEY_UP:
-			mCamera->roll(1); // rotates 1 on the Z axis
+			mCamera->pitchReal(1); // rotates 1 on the X axis
 			break;
 		case GLFW_KEY_DOWN:
-			mCamera->roll(-1); // rotates -1 on the Z axis
+			mCamera->pitchReal(-1); // rotates -1 on the X axis
 			break;
 		default:
 			need_redisplay = false;
@@ -299,4 +365,78 @@ IG1App::changeScene(size_t sceneNr)
 	}
 
 	return true;
+}
+
+void 
+IG1App::s_mouse( GLFWwindow * win, GLint button, GLint action, GLint mods)
+{
+	s_ig1app.mouse(button, action, mods);
+}
+
+void 
+IG1App::s_motion( GLFWwindow * win, GLdouble x, GLdouble y)
+{
+	s_ig1app.motion(x, y);
+}
+
+void 
+IG1App::s_mouseWheel ( GLFWwindow * win, GLdouble dx, GLdouble dy)
+{
+	s_ig1app.mouseWheel(dx, dy);
+}
+
+void 
+IG1App::mouse( GLint button, GLint action, GLint mods)
+{
+	if (mMouseButt == button)
+		mMouseButt = -1;
+	else 
+		mMouseButt = button;
+	std::cout << button << "\n";
+
+	glfwGetCursorPos(mWindow, &mMouseCoord.x, &mMouseCoord.y);
+
+	GLint height;
+	glfwGetWindowSize (mWindow, nullptr, &height);
+	mMouseCoord.y = height - mMouseCoord.y;
+}
+
+void 
+IG1App::motion( GLdouble x, GLdouble y)
+{
+	glm::dvec2 mp;
+	glfwGetCursorPos(mWindow, &mp.x, &mp.y);
+
+	GLint height;
+	glfwGetWindowSize (mWindow, nullptr, &height);
+	mp.y = height - mp.y;
+	glm::dvec2 a_mCoord = mp;
+
+	mp -= mMouseCoord;
+
+	mMouseCoord = a_mCoord;
+
+	if (mMouseButt ==  GLFW_MOUSE_BUTTON_LEFT)
+	{
+		mCamera->orbit(-mp.x * 0.1, -mp.y * 2);
+	}
+	else if (mMouseButt ==  GLFW_MOUSE_BUTTON_RIGHT)
+	{
+		mCamera->moveLR(-mp.x);
+		mCamera->moveUD(-mp.y);
+	}
+
+	mNeedsRedisplay = true;
+}
+
+void 
+IG1App::mouseWheel ( GLdouble dx, GLdouble dy )
+{
+	std::cout << dx << " " << dy << "\n";
+	if (glfwGetKey(mWindow, GLFW_MOD_CONTROL) == GLFW_PRESS)
+		mCamera->setScale(dy*10);
+	else 
+		mCamera->moveFB(dy*10);
+
+	mNeedsRedisplay = true;
 }
