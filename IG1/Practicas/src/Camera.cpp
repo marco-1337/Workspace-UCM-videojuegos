@@ -158,6 +158,7 @@ void Camera::rollReal(GLfloat cs)
 	setVM();
 }
 
+// Literalmente el de las diapositivas no hay mucho mas
 void Camera::orbit(GLdouble incAng, GLdouble incY)
 {
 	mAng += incAng;
@@ -169,6 +170,7 @@ void Camera::orbit(GLdouble incAng, GLdouble incY)
 
 void Camera::setCenital()
 {
+	// Coloca la camara arriba del origen y la pone mirando hacia abajo
 	mEye = {0, 1000, 0};
 	mLook = {0, 0, 0};
 	mUp = {0, 0, -1};
@@ -209,6 +211,7 @@ Camera::setPM()
 	}
 	else {
 		
+		// Ajustes para tener el fov que quiero (en este caso el fov que quiero es 90)
 		GLfloat yTop = mNearVal * tan(glm::half_pi<GLfloat>() / 2.0);
 		GLfloat yBot = -yTop;
 		GLfloat xRight = yTop * ((GLfloat)IG1App::s_ig1app.getWinWidth()/(GLfloat)IG1App::s_ig1app.getWinHeight());

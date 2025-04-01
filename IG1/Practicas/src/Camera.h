@@ -56,6 +56,7 @@ public:
 	/// @param incY movimiento en el eje y de la cámara
 	void orbit (GLdouble incAng, GLdouble incY);
 
+	/// @brief Colocar la camara en una vista cenital
 	void setCenital();
 
 	// projection matrix

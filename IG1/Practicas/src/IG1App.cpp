@@ -99,6 +99,7 @@ IG1App::init()
 	mScenes[0]->load();
 
 	// Apartado 50
+	// Registrar los callbacks estáticos
 	glfwSetMouseButtonCallback(mWindow, s_mouse);
 	glfwSetCursorPosCallback (mWindow, s_motion);
 	glfwSetScrollCallback (mWindow, s_mouseWheel);
@@ -273,21 +274,11 @@ IG1App::key(unsigned int key)
 		case 'P' :
 			mCamera->changePrj();
 			break;
-		// Apartado 43
-		case 'm' :
-			mCamera->orbit(2, 2);
-			break;
-		case 'M' :
-			mCamera->orbit(-2, -2);
-			break;
-		case 'n' :
-			mCamera->orbit(2, 0.0);
-			break;
-		case 'N' :
-			mCamera->orbit(-2, 0.0);
-			break;
 		// Apartado 48
 		case 'z' :
+			mCamera->setCenital();
+			break;
+		case 'Z' :
 			mCamera->setCenital();
 			break;
 		// Apartado 49
@@ -372,13 +363,11 @@ IG1App::s_mouse( GLFWwindow * win, GLint button, GLint action, GLint mods)
 {
 	s_ig1app.mouse(button, action, mods);
 }
-
 void 
 IG1App::s_motion( GLFWwindow * win, GLdouble x, GLdouble y)
 {
 	s_ig1app.motion(x, y);
 }
-
 void 
 IG1App::s_mouseWheel ( GLFWwindow * win, GLdouble dx, GLdouble dy)
 {
@@ -388,14 +377,17 @@ IG1App::s_mouseWheel ( GLFWwindow * win, GLdouble dx, GLdouble dy)
 void 
 IG1App::mouse( GLint button, GLint action, GLint mods)
 {
+	// Como los botones corresponden a variantes de enum no pueden ser negativos
+	// Cuando el botón se presiona y se suelta se llama al callback, la segunda vez se comprueba
+	// que es el mismo botón (ergo se ha soltado) y por eso se pone el botón a -1
 	if (mMouseButt == button)
 		mMouseButt = -1;
 	else 
 		mMouseButt = button;
-	std::cout << button << "\n";
 
 	glfwGetCursorPos(mWindow, &mMouseCoord.x, &mMouseCoord.y);
 
+	// Conversión de pos de ratón
 	GLint height;
 	glfwGetWindowSize (mWindow, nullptr, &height);
 	mMouseCoord.y = height - mMouseCoord.y;
@@ -410,18 +402,28 @@ IG1App::motion( GLdouble x, GLdouble y)
 	GLint height;
 	glfwGetWindowSize (mWindow, nullptr, &height);
 	mp.y = height - mp.y;
+
+	// Me guardo la pos en la que estoy para asignarla a mMouseCoord mas tarde
+	// tengo que hacer esto porque necesito los valores de mMouseCoord y mp sin 
+	// adulterar para sacar la diferencia
 	glm::dvec2 a_mCoord = mp;
 
+	// Reasignar diferencia entre donde estaba y a dodne me he movido en mp para reaprovechar memoria
 	mp -= mMouseCoord;
 
+	// Actualizar posición del ratón a la nueva en el callback
 	mMouseCoord = a_mCoord;
 
+	// Botón izquierdo orbita
 	if (mMouseButt ==  GLFW_MOUSE_BUTTON_LEFT)
 	{
+		// Invertido para que sea más intuitivo, de la otra forma da sensación de inversión de controles
 		mCamera->orbit(-mp.x * 0.1, -mp.y * 2);
 	}
+	// Derecho mueve en el plano 
 	else if (mMouseButt ==  GLFW_MOUSE_BUTTON_RIGHT)
 	{
+		// Invertidos ambos para que sea control intuitivo y no de "avión"
 		mCamera->moveLR(-mp.x);
 		mCamera->moveUD(-mp.y);
 	}
@@ -432,10 +434,12 @@ IG1App::motion( GLdouble x, GLdouble y)
 void 
 IG1App::mouseWheel ( GLdouble dx, GLdouble dy )
 {
-	std::cout << dx << " " << dy << "\n";
+	// Comprobacion de control rpesionado
 	if (glfwGetKey(mWindow, GLFW_MOD_CONTROL) == GLFW_PRESS)
+		// Si el control se presiona, se cambia la escala de la ventana
 		mCamera->setScale(dy*10);
 	else 
+		// Si no está presionado, la cámara se acerca
 		mCamera->moveFB(dy*10);
 
 	mNeedsRedisplay = true;

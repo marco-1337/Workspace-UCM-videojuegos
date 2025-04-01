@@ -45,10 +45,13 @@ protected:
 	glm::dvec2 mMouseCoord;
 	GLint mMouseButt = -1;
 
+	// Callbacks estáticos
+	// Llaman a los callbacks miembros del singletón
 	static void s_mouse( GLFWwindow * win, GLint button, GLint action, GLint mods);
 	static void s_motion( GLFWwindow * win, GLdouble x, GLdouble y);
 	static void s_mouseWheel ( GLFWwindow * win, GLdouble dx, GLdouble dy);
 
+	// Callbacks de cada input del raton
 	void mouse( GLint button, GLint action, GLint mods);
 	void motion( GLdouble x, GLdouble y);
 	void mouseWheel ( GLdouble dx, GLdouble dy );
