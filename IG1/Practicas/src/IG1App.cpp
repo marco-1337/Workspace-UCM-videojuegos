@@ -380,7 +380,7 @@ IG1App::mouse( GLint button, GLint action, GLint mods)
 	// Como los botones corresponden a variantes de enum no pueden ser negativos
 	// Cuando el botón se presiona y se suelta se llama al callback, la segunda vez se comprueba
 	// que es el mismo botón (ergo se ha soltado) y por eso se pone el botón a -1
-	if (mMouseButt == button)
+	if (GLFW_RELEASE == action)
 		mMouseButt = -1;
 	else 
 		mMouseButt = button;
