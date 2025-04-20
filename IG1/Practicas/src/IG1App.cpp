@@ -4,8 +4,14 @@
 #include "Scene1.h"
 #include "Scene2.h"
 #include "Scene3.h"
+#include "Scene4.h"
+#include "Scene5.h"
+#include "Scene6.h"
+#include "Scene7.h"
 
 #include <iostream>
+
+#include "ColorMaterialEntity.h"
 
 using namespace std;
 
@@ -87,6 +93,10 @@ IG1App::init()
 	mScenes.push_back(new Scene1);
 	mScenes.push_back(new Scene2);
 	mScenes.push_back(new Scene3);
+	mScenes.push_back(new Scene4);
+	mScenes.push_back(new Scene5);
+	mScenes.push_back(new Scene6);
+	mScenes.push_back(new Scene7);
 
 	mCamera->set2D();
 
@@ -284,6 +294,17 @@ IG1App::key(unsigned int key)
 		// Apartado 49
 		case 'k' :
 			m2vistas = !m2vistas;
+			break;
+		// Apartado 61
+		case 'n' :
+			ColorMaterialEntity::toggleShowNormals();
+			break;
+		// Apartado 68
+		case 'f' :
+		mScenes[mCurrentScene]->rotate();
+			break;
+		case 'g' :
+		mScenes[mCurrentScene]->orbit();
 			break;
 		default:
 			if (key >= '0' && key <= '9' && !changeScene(key - '0'))

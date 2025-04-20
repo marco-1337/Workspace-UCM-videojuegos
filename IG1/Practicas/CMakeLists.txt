@@ -92,10 +92,27 @@ add_executable(IG1_Practicas
     src/Entities/GlassParapet.cpp
     src/Entities/Photo.cpp
 
+    #práctica 4
+    src/IndexMesh.cpp
+    src/Entities/Torus.cpp
+    src/Entities/ColorMaterialEntity.cpp
+    src/Entities/IndexedBox.cpp
+    src/Entities/Sphere.cpp
+    src/Entities/Disk.cpp
+    src/Entities/Cone.cpp
+    src/Entities/CompoundEntity.cpp
+    src/Entities/WingAdvancedTIE.cpp
+    src/Entities/TranslucentEntity.cpp
+    src/Entities/AdvancedTIE.cpp
+
     src/Scene0.cpp
     src/Scene1.cpp
     src/Scene2.cpp
     src/Scene3.cpp
+    src/Scene4.cpp
+    src/Scene5.cpp
+    src/Scene6.cpp
+    src/Scene7.cpp
 )
 
 set_target_properties(IG1_Practicas PROPERTIES 

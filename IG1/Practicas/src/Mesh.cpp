@@ -63,24 +63,48 @@ Mesh::load()
 			sizeof(vec2), nullptr);
 			glEnableVertexAttribArray(2);
 		}
+
+		if ( vNormals .size() > 0) // upload normals
+		{
+			glGenBuffers (1, &mNBO);
+			glBindBuffer ( GL_ARRAY_BUFFER , mNBO);
+			glBufferData ( GL_ARRAY_BUFFER ,
+			vNormals .size() * sizeof(vec3),
+			vNormals .data(), GL_STATIC_DRAW );
+			glVertexAttribPointer (3, 3, GL_FLOAT , GL_FALSE ,
+			sizeof(vec3), nullptr );
+			glEnableVertexAttribArray (3);
+		}
 	}
 }
 
 void
 Mesh::unload()
 {
-	if (mVAO != NONE) {
+	if (mVAO != NONE) 
+	{
 		glDeleteVertexArrays(1, &mVAO);
 		glDeleteBuffers(1, &mVBO);
 		mVAO = NONE;
 		mVBO = NONE;
 
-		if (mCBO != NONE) {
+		if (mCBO != NONE) 
+		{
 			glDeleteBuffers(1, &mCBO);
 			mCBO = NONE;
 		}
 
-		if (mTCO != NONE) glDeleteBuffers(1, &mTCO);
+		if (mTCO != NONE) 
+		{
+			glDeleteBuffers(1, &mTCO);
+			mTCO = NONE;
+		}
+
+		if (mNBO != NONE) 
+		{
+			glDeleteBuffers(1, &mNBO);
+			mNBO = NONE;
+		}
 	}
 }
 
@@ -516,4 +540,37 @@ Mesh::generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h)
 	}
 
 	return mesh;
+}
+
+// Apartado 66
+Mesh* 
+Mesh::generateTIEWing(GLdouble height, GLdouble width, GLdouble wingOffset) 
+{
+	Mesh* mesh = new Mesh();
+
+	mesh->mPrimitive = GL_TRIANGLE_STRIP;
+
+	mesh->mNumVertices = 8;
+
+    mesh->vVertices = 
+    {
+        {wingOffset, height/2, width/2},
+        {wingOffset, height/2, -width/2},
+        {0, (height/3)/2, width/2},
+        {0, (height/3)/2, -width/2},
+        {0, -(height/3)/2, width/2},
+        {0, -(height/3)/2, -width/2},
+        {wingOffset, -height/2, width/2},
+        {wingOffset, -height/2, -width/2},
+    };
+
+	GLdouble texOffset = 0.8/4.0;
+
+	for (int i = 0; i < 4; ++i)
+	{
+		mesh->vTexCoords.emplace_back(0.4, 1.0 - texOffset*i);
+		mesh->vTexCoords.emplace_back(0., 1.0 - texOffset*i);
+	}
+	
+    return mesh;
 }

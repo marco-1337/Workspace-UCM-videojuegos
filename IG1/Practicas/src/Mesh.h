@@ -35,6 +35,9 @@ public:
 	// Apartado 29
 	static Mesh* generateStar3DTexCor(GLdouble re, GLuint np, GLdouble h);
 
+	// Apartado 66
+	static Mesh* generateTIEWing(GLdouble height, GLdouble width, GLdouble wingOffset);
+
 	Mesh();
 	virtual ~Mesh();
 
@@ -48,16 +51,20 @@ public:
 	std::vector<glm::vec4> const& colors() const { return vColors; };
 	std::vector<glm::vec2> const& texCoords() const { return vTexCoords; }
 
-	void load();
-	void unload();
+	virtual void load();
+	virtual void unload();
 
 protected:
-	GLuint mPrimitive =
-	  GL_TRIANGLES;          // graphic primitive: GL_POINTS, GL_LINES, GL_TRIANGLES, ...
+	GLuint mPrimitive = GL_TRIANGLES;          // graphic primitive: GL_POINTS, GL_LINES, GL_TRIANGLES, ...
 	GLuint mNumVertices = 0; // number of elements ( = vVertices.size())
 	std::vector<glm::vec3> vVertices; // vertex array
 	std::vector<glm::vec4> vColors;   // color array
 	std::vector<glm::vec2> vTexCoords; //texture array
+
+	// Apartado 57
+	std::vector<glm::vec3> vNormals; // normals array
+	GLuint mNBO; // normal buffer object
+
 	virtual void draw() const;
 
 	GLuint mVAO;  // vertex array object
@@ -68,4 +75,4 @@ private:
 	GLuint mTCO;
 };
 
-#endif //_H_Scene_H_
+#endif //_H_Mesh_H_
