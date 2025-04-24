@@ -30,9 +30,9 @@ IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nS
     int tamPerfil = profile.size();
     mesh-> vVertices . reserve ( nSamples * tamPerfil );
     // Genera los vértices de las muestras 
-    GLdouble theta1 = 2 * numbers ::pi / nSamples ;
+    GLdouble theta1 = angleMax / nSamples ;
 
-    for (int i = 0; i <= nSamples ; ++i) // muestra i-ésima
+    for (int i = 0; i <= nSamples; ++i) // muestra i-ésima
     {
         GLdouble c = cos(i * theta1 ), s = sin(i * theta1 );
         for (auto p : profile) // rota el perfil
@@ -54,8 +54,76 @@ IndexMesh::generateByRevolution(const std::vector<glm::vec2>& profile, GLuint nS
 
     mesh->buildNormalVectors();
 
-    mesh-> mNumVertices = mesh-> vVertices .size();
+    mesh->mNumVertices = mesh->vVertices.size();
+
+    GLint startLastFace = mesh->mNumVertices - tamPerfil;
+
+    for (GLint i = 0; i < tamPerfil; ++i)
+    {
+        mesh->vNormals[i] += mesh->vNormals[startLastFace + i];
+        mesh->vNormals[i] = normalize(mesh->vNormals[i]);
+        mesh->vNormals[startLastFace + i] = mesh->vNormals[i];
+    }
+
     return mesh;
+}
+
+IndexMesh* 
+IndexMesh::generateIndexedSphere(GLdouble radius, GLuint nParallels, GLuint nMeridians)
+{
+    vector<vec2> profile = vector<vec2>();
+
+    GLdouble startingPoint = std::numbers::pi/2;
+
+	GLdouble theta = std::numbers::pi / (nParallels + 1);
+
+    for (GLuint i = 0; i < nParallels + 2; ++i)
+    {
+        // Resta para que sea clockwise y los triangulos se pinten en counter-clockwise
+		profile.emplace_back((radius * cos(startingPoint - theta * i)), radius * sin(startingPoint- theta * i));
+    }
+
+    IndexMesh* iMesh = generateByRevolution(profile, nMeridians);
+
+    iMesh->vNormals[0] = vec3(0., 1., 0.);
+    iMesh->vNormals[profile.size() - 1] = vec3(0., -1., 0.);
+
+    for (int i = 1; i < nMeridians + 1; ++i) 
+    {
+        iMesh->vNormals[i*profile.size()] = iMesh->vNormals[0]; 
+        
+        iMesh->vNormals[i*profile.size() + profile.size() - 1] = 
+            iMesh->vNormals[profile.size() - 1];
+    }
+
+    return iMesh;
+}
+
+IndexMesh*
+IndexMesh::generateIndexedTorus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples)
+{
+    vector<vec2> profile = vector<vec2>();
+
+    GLdouble angleStep = radians(360.0) / nPoints;
+
+    // clockwise para culling bien
+    GLdouble theta = -(2.0f * std::numbers::pi) / nPoints;
+
+    for (GLuint i = 0; i < nPoints + 1; ++i)
+    {
+        profile.emplace_back(R + (r * cos(theta * i)), r * sin(theta * i));
+    }
+
+    IndexMesh* iMesh = IndexMesh::generateByRevolution(profile, nSamples);
+
+    for (int i = 0; i <= nSamples; ++i)
+    {
+        iMesh->vNormals[i * (nPoints+1)] += iMesh->vNormals[i * (nPoints+1) + nPoints];
+        iMesh->vNormals[i * (nPoints+1)] = normalize(iMesh->vNormals[i * (nPoints+1)]);
+        iMesh->vNormals[i * (nPoints+1) + nPoints] = iMesh->vNormals[i * (nPoints+1)];
+    }
+
+    return iMesh;
 }
 
 IndexMesh* 
@@ -130,5 +198,5 @@ IndexMesh::buildNormalVectors()
         vNormals[vIndexes[k+2]] += normal;
     }
 
-    for (vec3& n : vNormals) normalize(n);
+    for (vec3& n : vNormals) n = normalize(n);
 }

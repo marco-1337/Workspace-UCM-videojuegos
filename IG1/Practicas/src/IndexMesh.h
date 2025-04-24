@@ -26,6 +26,10 @@ public:
         const std::vector<glm::vec2>& profile, GLuint nSamples,
         GLfloat angleMax = 2 * std::numbers::pi);
 
+    static IndexMesh* generateIndexedSphere(GLdouble radius, GLuint nParallels, GLuint nMeridians);
+
+    static IndexMesh* generateIndexedTorus(GLdouble R, GLdouble r, GLuint nPoints, GLuint nSamples);
+
     // Apartado 59
     static IndexMesh* generateIndexedBox(GLdouble l);
 protected:
