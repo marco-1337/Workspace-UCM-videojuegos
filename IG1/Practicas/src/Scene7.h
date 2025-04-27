@@ -3,8 +3,8 @@
 #include <vector>
 
 class CompoundEntity;
-
 class Abs_Entity;
+class PosLight;
 
 // Apartado 67
 class Scene7 : public Scene
@@ -14,9 +14,16 @@ public:
     void load() override;
     void unload() override;
 
-    // Apartado 68
-    virtual void rotate() override;
-	virtual void orbit() override;
+    GLboolean sceneKeyPress(GLchar) override;
 private:
+
     CompoundEntity* inventedNode;
+
+    PosLight* posLight = nullptr;
+    SpotLight* spotLight = nullptr;
+    SpotLight* tieLight = nullptr;
+
+    // Apartado 68
+    void rotate();
+	void orbit();
 };

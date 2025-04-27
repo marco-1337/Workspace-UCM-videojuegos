@@ -9,8 +9,8 @@
 using namespace glm;
 
 //Apartado 64
-Sphere::Sphere(GLdouble radius, GLuint nParallels, GLuint nMeridians)
-: ColorMaterialEntity()
+Sphere::Sphere(glm::dvec4 color, GLdouble radius, GLuint nParallels, GLuint nMeridians)
+: ColorMaterialEntity(color)
 {
 	mMesh = IndexMesh::generateIndexedSphere(radius, nParallels, nMeridians);
 }

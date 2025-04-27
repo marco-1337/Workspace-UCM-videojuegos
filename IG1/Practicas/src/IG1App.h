@@ -34,6 +34,8 @@ public:
 	GLint getWinWidth() { return (m2vistas) ? mWinW/2 : mWinW; }
 	GLint getWinHeight() { return mWinH; }
 
+	GLboolean showNormals() { return mShowNormals;}
+
 protected:
 
 	// Apartado 14
@@ -44,6 +46,10 @@ protected:
 	// Apartado 50
 	glm::dvec2 mMouseCoord;
 	GLint mMouseButt = -1;
+
+	// Apartado 61
+	// se lee con el metodo showNormals, usada para saber si renderizar o no normales
+	GLboolean mShowNormals = false;
 
 	// Callbacks estáticos
 	// Llaman a los callbacks miembros del singletón

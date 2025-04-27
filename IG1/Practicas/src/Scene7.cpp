@@ -7,6 +7,7 @@
 #include "CompoundEntity.h"
 #include "Sphere.h"
 #include "Texture.h"
+#include "Light.h"
 
 #include "IG1App.h"
 
@@ -19,8 +20,51 @@ Scene7::init()
 {
 	setGL(); // OpenGL settings
 
+    Scene::init();
+
+    Material goldenMaterial = Material();
+
+    goldenMaterial.setAmb({0.24725, 0.1995, 0.0745});
+    goldenMaterial.setDiff({0.75164, 0.60648, 0.22648});
+    goldenMaterial.setSpec({0.628281, 0.555902, 0.366065});
+    goldenMaterial.setExp(51.2);
+
 	// allocate memory and load resources
 	// Lights
+
+    // Luz posicional en el plano XZ
+
+    posLight = new PosLight(0);
+    posLight->setPosition(vec3(1000., 1000., .0));
+    posLight->setAttenuation(1.5, 0., 0.);
+	posLight->setAmb({.25, .25, .25});
+	posLight->setDiff({1., 1., .0});
+	posLight->setSpec({.2, .2, .2});
+	posLight->setEnabled(true);
+	gLights.push_back(posLight);
+
+    // Foco en el plano YZ (en el eje Z)
+
+    spotLight = new SpotLight(vec3(.0, .0, 550.), 0);
+    spotLight->setCutoff(40., 45.);
+    spotLight->setDirection(vec3(0., 0., -1));
+    spotLight->setAttenuation(1, 0., 0.);
+	spotLight->setAmb({.25, .25, .25});
+	spotLight->setDiff({.6, .6, .6});
+	spotLight->setSpec({.2, .2, .2});
+	spotLight->setEnabled(true);
+	//gLights.push_back(spotLight);
+
+    // Inizializar la luz de exploracion del tie mirando hacia abajo
+    tieLight = new SpotLight(vec3(.0, 21., 0.), 0);
+    tieLight->setCutoff(30., 50.);
+    tieLight->setDirection(vec3(0., -1., 0.));
+    tieLight->setAttenuation(1, 0., 0.);
+	tieLight->setAmb({.25, .25, .25});
+	tieLight->setDiff({.6, .6, .6});
+	tieLight->setSpec({.2, .2, .2});
+	tieLight->setEnabled(true);
+	gLights.push_back(tieLight);
 
 	// Textures
 	Texture* wingTex = new Texture();
@@ -30,16 +74,60 @@ Scene7::init()
 	// Graphics objects (entities) of the scene
 	gObjects.push_back(new RGBAxes(400.0));
 
-    Sphere* tatooine = new Sphere(500., 40, 40);
-    tatooine->setColor({255./255., 233./255., 0., 1.});
-    gObjects.push_back(tatooine);
-
     inventedNode = new CompoundEntity();
     AdvancedTIE* tie = new AdvancedTIE(0.1, wingTex);
+
+    // Añadir luz de exploracion
+    tie->addLight(tieLight);
+
     inventedNode->addEntity(tie);
     tie->setModelMat(translate(mat4(1.0), vec3(0. , 550., 0.)));
+    
+    inventedNode->setModelMat
+        (
+            glm::rotate
+            (
+                inventedNode->modelMat(),
+                radians<GLfloat>(90.0), 
+                vec3(0., 1., 0.)
+            )
+        );
 
 	gObjects.push_back(inventedNode);
+
+    Sphere* tatooine = new Sphere({255./255., 233./255., 0., 1.}, 500., 40, 40);
+    tatooine->setMaterial(goldenMaterial);
+    gObjects.push_back(tatooine);
+}
+
+GLboolean
+Scene7::sceneKeyPress(GLchar key) 
+{
+    GLboolean retVal = true;
+
+    switch (key)
+    {
+        // Apartado 68
+        case 'f':
+            rotate();
+            break;
+        case 'g':
+            orbit();
+            break;
+        case 't':
+            if (posLight != nullptr)
+                posLight->setEnabled(!posLight->enabled());
+            break;
+        case 'h':
+            if (tieLight != nullptr)
+                tieLight->setEnabled(!tieLight->enabled());
+            break;
+        default:
+            retVal = false;
+            break;
+    }
+
+    return retVal;
 }
 
 void

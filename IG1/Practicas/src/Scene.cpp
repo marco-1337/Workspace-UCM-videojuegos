@@ -5,6 +5,18 @@
 
 using namespace glm;
 
+void
+Scene::init()
+{
+	dirLight = new DirLight(0);
+
+	dirLight->setAmb({.25, .25, .25});
+	dirLight->setDiff({.6, .6, .6});
+	dirLight->setSpec({.2, .2, .2});
+	dirLight->setEnabled(true);
+	gLights.push_back(dirLight);
+}
+
 Scene::~Scene()
 {
 	destroy();
@@ -24,6 +36,11 @@ Scene::destroy()
 		delete tx;
 
 	gTextures.clear();
+
+	for (Light* lg : gLights)
+		delete lg;
+	
+	gLights.clear();
 }
 
 void
@@ -38,6 +55,13 @@ Scene::unload()
 {
 	for (Abs_Entity* obj : gObjects)
 		obj->unload();
+
+	Shader& lightShader = *(Shader::get("light"));
+
+	lightShader.use();
+
+	for (Light* lg : gLights)
+		lg->unload(lightShader);
 }
 
 void
@@ -61,9 +85,23 @@ Scene::resetGL()
 }
 
 void
+Scene::uploadLights(Camera const& cam) const
+{
+	Shader& lightShader = *(Shader::get("light"));
+
+	lightShader.use();
+
+	for (Light* lg : gLights)
+		lg->upload(lightShader, cam.viewMat());
+}
+
+void
 Scene::render(Camera const& cam) const
 {
 	cam.upload();
+
+	// Cargar luces antes de renderizar
+	uploadLights(cam);
 
 	for (Abs_Entity* el : gObjects)
 		el->render(cam.viewMat());
@@ -76,5 +114,15 @@ Scene::update()
 	for (Abs_Entity* el : gObjects)
 	{
 		el->update();
+	}
+}
+
+// Apartado 74
+void 
+Scene::switchDirLight()
+{
+	if (dirLight != nullptr)
+	{
+		dirLight->setEnabled(!dirLight->enabled());
 	}
 }

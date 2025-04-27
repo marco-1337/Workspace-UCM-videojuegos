@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Entity.h"
 #include "Texture.h"
+#include "Light.h"
 
 #include <vector>
 
@@ -19,7 +20,7 @@ public:
 	Scene(const Scene& s) = delete;            // no copy constructor
 	Scene& operator=(const Scene& s) = delete; // no copy assignment
 
-	virtual void init() = 0;
+	virtual void init();
 
 	virtual void render(Camera const& cam) const;
 	void update();
@@ -28,15 +29,23 @@ public:
 	virtual void load();
 	virtual void unload();
 
-	virtual void rotate() {};
-	virtual void orbit() {};
+	// Apartado 74
+	void switchDirLight();
+
+	virtual GLboolean sceneKeyPress(GLchar) { return false; }
 
 protected:
 	void destroy();
 	void setGL();
 	void resetGL();
 
+	// Apartado 73
+	void uploadLights(Camera const& cam) const;
+
 	std::vector<Abs_Entity*> gObjects; // Entities (graphic objects) of the scene
 	std::vector<Texture*> gTextures;
+	std::vector<Light*> gLights;
+
+	DirLight* dirLight = nullptr;
 };
 #endif //_H_Scene_H_

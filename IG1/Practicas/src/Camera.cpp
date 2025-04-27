@@ -28,11 +28,14 @@ Camera::uploadVM() const
 {
 	Shader::setUniform4All("modelView", mViewMat);
 
+	/* PRACTICA 4: En la 5 ya se implementan luces mejor así que esto ya no hace falta
+
 	Shader* lightShader = Shader::get("simple_light");
 	lightShader->use();
 
 	glm::vec4 calculatedDir = mViewMat * vec4(-1, -1, -1, 0);
 	lightShader->setUniform("lightDir", glm::normalize(calculatedDir));
+	*/
 }
 
 void

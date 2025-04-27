@@ -8,18 +8,22 @@ using namespace glm;
 
 CompoundEntity::~CompoundEntity() 
 {
-    for (Abs_Entity* e : gObjects)
-    {
-        delete e;
-    }
-
+    for (Abs_Entity* e : gObjects) delete e;
     gObjects.clear();
+
+    // No se meten las luces porque no se destruyen aquí, las destruye la escena
 }
 
 void
 CompoundEntity::addEntity(Abs_Entity* aEnt)
 {
     gObjects.push_back(aEnt);
+}
+
+void 
+CompoundEntity::addLight(PosLight* light)
+{
+    gPosLights.push_back(light);
 }
 
 void
@@ -45,10 +49,12 @@ CompoundEntity::render(mat4 const& modelViewMat) const
 {
     mat4 aMat = modelViewMat * mModelMat;
 
-    for (Abs_Entity* e : gObjects)
-    {
-        e->render(aMat);
-    }
+    Shader* lightshader = Shader::get("light");
+    lightshader->use();
+
+    for (PosLight* l : gPosLights) l->upload(*lightshader, aMat);
+
+    for (Abs_Entity* e : gObjects) e->render(aMat);
 }
 
 void

@@ -8,6 +8,7 @@
 #include "Scene5.h"
 #include "Scene6.h"
 #include "Scene7.h"
+#include "Scene8.h"
 
 #include <iostream>
 
@@ -97,6 +98,7 @@ IG1App::init()
 	mScenes.push_back(new Scene5);
 	mScenes.push_back(new Scene6);
 	mScenes.push_back(new Scene7);
+	mScenes.push_back(new Scene8);
 
 	mCamera->set2D();
 
@@ -297,20 +299,23 @@ IG1App::key(unsigned int key)
 			break;
 		// Apartado 61
 		case 'n' :
-			ColorMaterialEntity::toggleShowNormals();
+			mShowNormals = !mShowNormals;
 			break;
-		// Apartado 68
-		case 'f' :
-		mScenes[mCurrentScene]->rotate();
-			break;
-		case 'g' :
-		mScenes[mCurrentScene]->orbit();
+		// Apartado 74
+		case 'r' :
+		mScenes[mCurrentScene]->switchDirLight();
 			break;
 		default:
 			if (key >= '0' && key <= '9' && !changeScene(key - '0'))
 					cout << "[NOTE] There is no scene " << char(key) << ".\n";
+			else if (mScenes[mCurrentScene]->sceneKeyPress(key)) 
+			{ 
+				// aqui no hace nada, simplemente es para mantener el redisplay en true
+			}
 			else
+			{
 				need_redisplay = false;
+			}
 			break;
 	} // switch
 

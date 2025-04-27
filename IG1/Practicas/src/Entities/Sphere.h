@@ -6,5 +6,5 @@
 class Sphere : public ColorMaterialEntity
 {
 public:
-	explicit Sphere(GLdouble radius, GLuint nParallels, GLuint nMeridians);
+	explicit Sphere(glm::dvec4 color, GLdouble radius, GLuint nParallels, GLuint nMeridians);
 };

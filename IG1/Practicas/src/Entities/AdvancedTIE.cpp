@@ -14,10 +14,10 @@ using namespace glm;
 AdvancedTIE::AdvancedTIE(GLdouble scale, Texture* tex) 
 : CompoundEntity()
 {
+    Sphere* body = new Sphere({0., 65./255., 106./255., 1.}, 200. * scale, 20, 20);
 
-    Sphere* body = new Sphere(200. * scale, 20, 20);
-
-    Cone* frontCylinder = new Cone(120. * scale, 70. * scale, 70. * scale, 20, 14);
+    Cone* frontCylinder = new Cone({0., 65./255., 106./255., 1.}, 
+        120. * scale, 70. * scale, 70. * scale, 20, 14);
     // Mueve y rota para que el morro mire alante
     frontCylinder->setModelMat
     (
@@ -30,7 +30,7 @@ AdvancedTIE::AdvancedTIE(GLdouble scale, Texture* tex)
     );
 
     // Mismas samples que front cylinder
-    Disk* frontDisk = new Disk(70. * scale, 0., 6, 14);
+    Disk* frontDisk = new Disk({0., 65./255., 106./255., 1.}, 70. * scale, 0., 6, 14);
     // Mueve y rota como en frontcylinder
     frontDisk->setModelMat
     (
@@ -43,7 +43,8 @@ AdvancedTIE::AdvancedTIE(GLdouble scale, Texture* tex)
         )
     );
 
-    Cone* shaft = new Cone(800. * scale, 30. * scale, 30. * scale, 20, 12);
+    Cone* shaft = new Cone({0., 65./255., 106./255., 1.}, 
+        800. * scale, 30. * scale, 30. * scale, 20, 12);
     shaft->setModelMat(rotate(mat4(1.0), glm::half_pi<GLfloat>(), vec3(0., 0., 1.)));
 
     WingAdvancedTIE* leftWing = new WingAdvancedTIE(600. * scale, 400. * scale, 100. * scale, tex);
@@ -59,11 +60,6 @@ AdvancedTIE::AdvancedTIE(GLdouble scale, Texture* tex)
 
     WingAdvancedTIE* rightWing = new WingAdvancedTIE(600. * scale, 400. * scale, 100. * scale, tex);
     rightWing->setModelMat(translate(mat4(1.0), vec3(-400. * scale, 0., 0.)));
-
-    body->setColor({0., 65./255., 106./255., 1.});
-    frontCylinder->setColor({0., 65./255., 106./255., 1.});
-    frontDisk->setColor({0., 65./255., 106./255., 1.});
-    shaft->setColor({0., 65./255., 106./255., 1.});
 
     CompoundEntity::addEntity(body);
     CompoundEntity::addEntity(frontCylinder);

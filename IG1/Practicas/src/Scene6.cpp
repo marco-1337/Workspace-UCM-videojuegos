@@ -8,6 +8,8 @@ Scene6::init()
 {
 	setGL(); // OpenGL settings
 
+    Scene::init();
+
 	// allocate memory and load resources
 	// Lights
 

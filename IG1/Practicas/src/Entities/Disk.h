@@ -6,5 +6,5 @@
 class Disk : public ColorMaterialEntity
 {
 public:
-    explicit Disk(GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples);
+    explicit Disk(glm::dvec4 color, GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples);
 };

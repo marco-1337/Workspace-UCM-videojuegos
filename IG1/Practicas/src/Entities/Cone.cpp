@@ -9,8 +9,8 @@
 using namespace glm;
 
 //Apartado 64
-Cone::Cone(GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples)
-: ColorMaterialEntity()
+Cone::Cone(glm::dvec4 color, GLdouble h, GLdouble r, GLdouble R, GLuint nRings, GLuint nSamples)
+: ColorMaterialEntity(color)
 {
     vector<vec2> profile = vector<vec2>();
 

@@ -58,6 +58,7 @@ public:
 	virtual void upload(Shader& shader, glm::mat4 const& modelViewMat) const override;
 
 	void setPosition(const glm::fvec3& dir);
+	inline glm::vec3 getPosition() { return position;}
 	void setAttenuation(GLfloat kc, GLfloat kl, GLfloat kq);
 
 protected:

@@ -9,8 +9,8 @@
 using namespace glm;
 
 //Apartado 64
-Disk::Disk(GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples)
-: ColorMaterialEntity()
+Disk::Disk(glm::dvec4 color, GLdouble R, GLdouble r, GLuint nRings, GLuint nSamples)
+: ColorMaterialEntity(color)
 {
     vector<vec2> profile = vector<vec2>();
 

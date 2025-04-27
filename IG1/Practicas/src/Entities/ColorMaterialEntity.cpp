@@ -6,38 +6,27 @@
 
 using namespace glm;
 
-GLboolean ColorMaterialEntity::mShowNormals = false;
-
-ColorMaterialEntity::ColorMaterialEntity(glm::dvec4 color) : SingleColorEntity(color)
+ColorMaterialEntity::ColorMaterialEntity(glm::dvec4 color) :
+EntityWithMaterial()
 {
-    mShader = Shader::get("simple_light");
     _normalsShader = Shader::get("normals");
+
+	mMaterial = Material(color);
 }
 
 void
 ColorMaterialEntity::render(const glm::mat4& modelViewMat) const
 {
-	if (mMesh != nullptr) {
-		mat4 aMat = modelViewMat * mModelMat; // glm matrix multiplication
+	if (Abs_Entity::mMesh != nullptr) 
+	{
+		EntityWithMaterial::render(modelViewMat);
 
-		mShader->use();
-		mShader->setUniform("color", static_cast<glm::vec4>(mColor));
-		upload(aMat);
-
-		glEnable(GL_CULL_FACE);
-			glCullFace(GL_BACK);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		if (IG1App::s_ig1app.showNormals())
+		{
+			_normalsShader->use();
+			_normalsShader->setUniform("modelView", modelViewMat * mModelMat);
+	
 			mMesh->render();
-
-            // Apartado 61
-            if (ColorMaterialEntity::mShowNormals)
-            {
-                _normalsShader->use();
-                _normalsShader->setUniform("modelView", modelViewMat);
-        
-                mMesh->render();
-            }
-
-		glDisable(GL_CULL_FACE);
+		}
 	}
 }

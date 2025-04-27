@@ -105,6 +105,9 @@ add_executable(IG1_Practicas
     src/Entities/TranslucentEntity.cpp
     src/Entities/AdvancedTIE.cpp
 
+    #práctica 5
+    src/Entities/EntityWithMaterial.cpp
+
     src/Scene0.cpp
     src/Scene1.cpp
     src/Scene2.cpp
@@ -113,6 +116,7 @@ add_executable(IG1_Practicas
     src/Scene5.cpp
     src/Scene6.cpp
     src/Scene7.cpp
+    src/Scene8.cpp
 )
 
 set_target_properties(IG1_Practicas PROPERTIES 
