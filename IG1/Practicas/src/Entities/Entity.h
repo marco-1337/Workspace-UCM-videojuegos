@@ -8,6 +8,8 @@
 #include "Shader.h"
 #include "Texture.h"
 
+class PosLight;
+
 class Abs_Entity // abstract class
 {
 public:
@@ -35,12 +37,22 @@ public:
 
 	virtual void setBaseMat(glm::mat4& newMat) { mBaseMat = newMat; mModelMat = mBaseMat;}
 
+	/// @brief Carga las luces posicionales del objeto relativas al objeto
+	/// @param modelViewMat 
+	virtual void uploadLights(Shader& shader, const glm::mat4& modelViewMat) const;
+
+	void addLight(PosLight* light);
+
 protected:
 	Mesh* mMesh = nullptr; // the mesh
 	glm::mat4 mModelMat;  // modeling matrix
 	Shader* mShader; // shader
 
 	glm::mat4 mBaseMat;
+
+	// Apartado 77
+    /// @brief Luces relativas al objeto
+    std::vector<PosLight*> gPosLights;
 
 	// transfers modelViewMat to the GPU
 	virtual void upload(const glm::mat4& mModelViewMat) const;

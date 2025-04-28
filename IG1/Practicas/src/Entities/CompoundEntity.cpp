@@ -20,12 +20,6 @@ CompoundEntity::addEntity(Abs_Entity* aEnt)
     gObjects.push_back(aEnt);
 }
 
-void 
-CompoundEntity::addLight(PosLight* light)
-{
-    gPosLights.push_back(light);
-}
-
 void
 CompoundEntity::load()
 {
@@ -48,20 +42,20 @@ void
 CompoundEntity::render(mat4 const& modelViewMat) const
 {
     mat4 aMat = modelViewMat * mModelMat;
-
-    Shader* lightshader = Shader::get("light");
-    lightshader->use();
-
-    for (PosLight* l : gPosLights) l->upload(*lightshader, aMat);
-
     for (Abs_Entity* e : gObjects) e->render(aMat);
 }
 
 void
 CompoundEntity::update()
 {
-    for (Abs_Entity* e : gObjects)
-    {
-        e->update();
-    }
+    for (Abs_Entity* e : gObjects) e->update();
+}
+
+void
+CompoundEntity::uploadLights(Shader& shader, const mat4& modelViewMat) const
+{
+    Abs_Entity::uploadLights(shader, modelViewMat);
+
+    mat4 aMat = modelViewMat * mModelMat;
+    for (Abs_Entity* e : gObjects) e->uploadLights(shader, modelViewMat * mModelMat);
 }

@@ -17,6 +17,8 @@ Abs_Entity::~Abs_Entity()
 {
 	delete mMesh;
 	mMesh = nullptr;
+
+	gPosLights.clear();
 }
 
 void
@@ -30,6 +32,20 @@ Abs_Entity::unload()
 {
 	mMesh->unload();
 }
+
+void 
+Abs_Entity::addLight(PosLight* light)
+{
+    gPosLights.push_back(light);
+}
+
+void 
+Abs_Entity::uploadLights(Shader& shader, const glm::mat4& modelViewMat) const
+{
+    mat4 aMat = modelViewMat * mModelMat;
+    for (PosLight* l : gPosLights) l->upload(shader, aMat);
+}
+
 
 EntityWithColors::EntityWithColors()
 {

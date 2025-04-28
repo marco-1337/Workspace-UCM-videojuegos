@@ -30,74 +30,74 @@ Scene7::init()
     goldenMaterial.setExp(51.2);
 
 	// allocate memory and load resources
-	// Lights
+
+// Lights
 
     // Luz posicional en el plano XZ
-
     posLight = new PosLight(0);
     posLight->setPosition(vec3(1000., 1000., .0));
     posLight->setAttenuation(1.5, 0., 0.);
 	posLight->setAmb({.25, .25, .25});
 	posLight->setDiff({1., 1., .0});
-	posLight->setSpec({.2, .2, .2});
+	posLight->setSpec({.0, .2, .0});
 	posLight->setEnabled(true);
 	gLights.push_back(posLight);
 
     // Foco en el plano YZ (en el eje Z)
-
     spotLight = new SpotLight(vec3(.0, .0, 550.), 0);
     spotLight->setCutoff(40., 45.);
     spotLight->setDirection(vec3(0., 0., -1));
     spotLight->setAttenuation(1, 0., 0.);
 	spotLight->setAmb({.25, .25, .25});
 	spotLight->setDiff({.6, .6, .6});
-	spotLight->setSpec({.2, .2, .2});
+	spotLight->setSpec({.0, .2, .0});
 	spotLight->setEnabled(true);
-	//gLights.push_back(spotLight);
+	gLights.push_back(spotLight);
 
     // Inizializar la luz de exploracion del tie mirando hacia abajo
-    tieLight = new SpotLight(vec3(.0, 21., 0.), 0);
+    tieLight = new SpotLight(vec3(.0, 21., 0.), 1);
     tieLight->setCutoff(30., 50.);
     tieLight->setDirection(vec3(0., -1., 0.));
     tieLight->setAttenuation(1, 0., 0.);
 	tieLight->setAmb({.25, .25, .25});
 	tieLight->setDiff({.6, .6, .6});
-	tieLight->setSpec({.2, .2, .2});
+	tieLight->setSpec({.0, .2, .0});
 	tieLight->setEnabled(true);
 	gLights.push_back(tieLight);
 
-	// Textures
+// Textures
+
 	Texture* wingTex = new Texture();
 	wingTex->load("noche.jpg", 200);
 	gTextures.push_back(wingTex);
 
-	// Graphics objects (entities) of the scene
-	gObjects.push_back(new RGBAxes(400.0));
-
-    inventedNode = new CompoundEntity();
-    AdvancedTIE* tie = new AdvancedTIE(0.1, wingTex);
-
-    // Añadir luz de exploracion
-    tie->addLight(tieLight);
-
-    inventedNode->addEntity(tie);
-    tie->setModelMat(translate(mat4(1.0), vec3(0. , 550., 0.)));
-    
-    inventedNode->setModelMat
-        (
-            glm::rotate
-            (
-                inventedNode->modelMat(),
-                radians<GLfloat>(90.0), 
-                vec3(0., 1., 0.)
-            )
-        );
-
-	gObjects.push_back(inventedNode);
+// Graphics objects (entities) of the scene
 
     Sphere* tatooine = new Sphere({255./255., 233./255., 0., 1.}, 500., 40, 40);
     tatooine->setMaterial(goldenMaterial);
+
+    // Tie despues de tatooine porque contiene las alas traslucidas
+    tieInventedNode = new CompoundEntity();
+    AdvancedTIE* tie = new AdvancedTIE(0.1, wingTex);
+    // Añadir luz de exploracion
+    tie->addLight(tieLight);
+    tieInventedNode->addEntity(tie);
+    // Colocar tie a la altura del planeta
+    tie->setModelMat(translate(mat4(1.0), vec3(0. , 550., 0.)));
+    // Rotacion del nodo para que el tie empiece con su forward (1, 0, 0)
+    tieInventedNode->setModelMat
+    (
+        glm::rotate
+        (
+            tieInventedNode->modelMat(),
+            radians<GLfloat>(90.0), 
+            vec3(0., 1., 0.)
+        )
+    );
+
+	gObjects.push_back(new RGBAxes(400.0));
     gObjects.push_back(tatooine);
+	gObjects.push_back(tieInventedNode);
 }
 
 GLboolean
@@ -115,12 +115,13 @@ Scene7::sceneKeyPress(GLchar key)
             orbit();
             break;
         case 't':
-            if (posLight != nullptr)
-                posLight->setEnabled(!posLight->enabled());
+            if (posLight != nullptr) posLight->setEnabled(!posLight->enabled());
+            break;
+        case 'y':
+            if (spotLight != nullptr) spotLight->setEnabled(!spotLight->enabled());
             break;
         case 'h':
-            if (tieLight != nullptr)
-                tieLight->setEnabled(!tieLight->enabled());
+            if (tieLight != nullptr) tieLight->setEnabled(!tieLight->enabled());
             break;
         default:
             retVal = false;
@@ -147,11 +148,11 @@ Scene7::unload()
 void
 Scene7::orbit()
 {
-    inventedNode->setModelMat
+    tieInventedNode->setModelMat
     (
         glm::rotate
         (
-            inventedNode->modelMat(),
+            tieInventedNode->modelMat(),
             radians<GLfloat>(3.0), 
             vec3(1., 0., 0.)
         )
@@ -161,11 +162,11 @@ Scene7::orbit()
 void
 Scene7::rotate()
 {
-    inventedNode->setModelMat
+    tieInventedNode->setModelMat
     (
         glm::rotate
         (
-            inventedNode->modelMat(),
+            tieInventedNode->modelMat(),
             radians<GLfloat>(6.0), 
             vec3(0., 1., 0.)
         )

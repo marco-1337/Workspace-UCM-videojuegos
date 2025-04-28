@@ -11,6 +11,8 @@
 
 #include <vector>
 
+class CompoundEntity;
+
 class Scene
 {
 public:

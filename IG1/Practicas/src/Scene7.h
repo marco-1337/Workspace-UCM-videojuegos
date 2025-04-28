@@ -17,7 +17,7 @@ public:
     GLboolean sceneKeyPress(GLchar) override;
 private:
 
-    CompoundEntity* inventedNode;
+    CompoundEntity* tieInventedNode;
 
     PosLight* posLight = nullptr;
     SpotLight* spotLight = nullptr;

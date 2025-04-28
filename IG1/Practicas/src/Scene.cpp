@@ -12,7 +12,7 @@ Scene::init()
 
 	dirLight->setAmb({.25, .25, .25});
 	dirLight->setDiff({.6, .6, .6});
-	dirLight->setSpec({.2, .2, .2});
+	dirLight->setSpec({.0, .2, .0});
 	dirLight->setEnabled(true);
 	gLights.push_back(dirLight);
 }
@@ -91,8 +91,9 @@ Scene::uploadLights(Camera const& cam) const
 
 	lightShader.use();
 
-	for (Light* lg : gLights)
-		lg->upload(lightShader, cam.viewMat());
+	for (Light* lg : gLights) lg->upload(lightShader, cam.viewMat());
+
+	for (Abs_Entity* el : gObjects) el->uploadLights(lightShader, cam.viewMat());
 }
 
 void
@@ -103,8 +104,7 @@ Scene::render(Camera const& cam) const
 	// Cargar luces antes de renderizar
 	uploadLights(cam);
 
-	for (Abs_Entity* el : gObjects)
-		el->render(cam.viewMat());
+	for (Abs_Entity* el : gObjects) el->render(cam.viewMat());
 }
 
 // Apartado 12
