@@ -1,5 +1,4 @@
-#ifndef __SINBADEXAMPLE_H__
-#define __SINBADEXAMPLE_H__
+#pragma once
 
 #include <OgreApplicationContext.h>
 #include <OgreSceneManager.h>
@@ -16,11 +15,20 @@
 #include "Ogre.h"
 #include <OgreWindowEventUtilities.h>
 #include <SDL_keycode.h>
+#include <memory>
 
+constexpr Ogre::Real SCALE_UNIT = 10.;
+constexpr Ogre::Real CUBE_SIZE = 5. * SCALE_UNIT;
+constexpr Ogre::Real HERO_SPEED = 20. * SCALE_UNIT;
+
+class IG2Object;
+class Maze;
+class Hero;
 
 class IG2App: public OgreBites::ApplicationContext, OgreBites::InputListener {
 
 public:
+
     explicit IG2App() : OgreBites::ApplicationContext("IG2App") {};
     virtual ~IG2App() {};
 
@@ -33,6 +41,8 @@ protected:
 
     Ogre::SceneNode* mSinbadNode = nullptr;
 
+    Maze* mMaze = nullptr;
+
     Ogre::SceneManager* mSM = nullptr;
     OgreBites::TrayManager* mTrayMgr = nullptr;
 
@@ -43,5 +53,3 @@ protected:
     Ogre::SceneNode* mCamNode = nullptr;
     OgreBites::CameraMan* mCamMgr = nullptr;
 };
-
-#endif

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Como dijo una vez John Cleon, esto es una mierda, pero es la mejor mierda que tenemos
 set(OGRE_SDK $ENV{OGRE_DEBUG})
 
 set(OGRE_DIR ${OGRE_SDK}/sdk/CMake)
@@ -16,11 +17,17 @@ find_package(OGRE REQUIRED COMPONENTS Bites CONFIG)
 find_package(SDL2 REQUIRED)
 
 add_executable(IG2App 
-    Main.cpp
-    IG2App.cpp)
+    "Main.cpp"
+    "IG2App.cpp"
+    
+    "src/IG2Object.cpp"
+    "src/Maze.cpp"
+    "src/Tile.cpp"
+    "src/Hero.cpp")
 
 target_include_directories(IG2App PRIVATE
-    ${CMAKE_SOURCE_DIR})
+    "${CMAKE_SOURCE_DIR}"
+    "${CMAKE_SOURCE_DIR}/src")
 
 # this also sets the includes and pulls third party dependencies
 target_link_libraries(IG2App PRIVATE
@@ -36,8 +43,7 @@ set_target_properties(IG2App PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/bin/Release
 )
 
-
-# Ruta OGRE bin y media (desde variable de entorno)
+# Ruta OGRE bin (desde variable de entorno)
 set(OGRE_BINDIR ${OGRE_SDK}/sdk/bin)
 # Copy DLLs to target bin
 file(GLOB OGRE_DLL_FILES "${OGRE_BINDIR}/*.dll")

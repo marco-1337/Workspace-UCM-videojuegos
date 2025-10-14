@@ -1,5 +1,9 @@
 #include "IG2App.h"
 
+#include "IG2Object.h"
+#include "Maze.h"
+#include "Hero.h"
+
 using namespace std;
 using namespace Ogre;
 
@@ -16,6 +20,11 @@ bool IG2App::keyPressed(const OgreBites::KeyboardEvent& evt) {
 
 
 void IG2App::shutdown() {
+
+    if (mMaze != nullptr) {
+        delete mMaze;
+        mMaze = nullptr;
+    }
 
     mShaderGenerator->removeSceneManager(mSM);
     mSM->removeRenderQueueListener(mOverlaySystem);
@@ -93,18 +102,24 @@ void IG2App::setupScene(void) {
     //------------------------------------------------------------------------
     // Creating Sinbad
 
-    Ogre::Entity* ent = mSM->createEntity("Sinbad.mesh");
-    mSinbadNode = mSM->getRootSceneNode()->createChildSceneNode("nSinbad");
-    mSinbadNode->attachObject(ent);
+    //Ogre::Entity* ent = mSM->createEntity("Sinbad.mesh");
+    //mSinbadNode = mSM->getRootSceneNode()->createChildSceneNode("nSinbad");
+    //mSinbadNode->attachObject(ent);
 
     // Show bounding box
-    mSinbadNode->showBoundingBox(true);
+    //mSinbadNode->showBoundingBox(true);
+
+    mMaze = new Maze(Vector3(0.), mSM->getRootSceneNode()->createChildSceneNode(), mSM, "../stage1.txt", 
+        CUBE_SIZE, "cube.mesh");
+
+    addInputListener(mMaze->getHero());
 
     // Set position of Sinbad
     //mSinbadNode->setPosition(x, y, z);
 
     // Set scale of Sinbad
     //mSinbadNode->setScale(20, 20, 20);
+    
 
     //mSinbadNode->yaw(Ogre::Degree(-45));
     //mSinbadNode->setVisible(false);    
