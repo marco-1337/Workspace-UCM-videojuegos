@@ -91,8 +91,8 @@ Enemy::~Enemy() {
 
 void 
 Enemy::frameRendered(const Ogre::FrameEvent& evt) {
-    firstHelix->roll(Degree(firstRotation * evt.timeSinceLastFrame));
-    secondHelix->roll(Degree(secondRotation * evt.timeSinceLastFrame));
+    if (firstHelix != nullptr) firstHelix->roll(Degree(firstRotation * evt.timeSinceLastFrame));
+    if (secondHelix != nullptr) secondHelix->roll(Degree(secondRotation * evt.timeSinceLastFrame));
 
     int x = tileX;
     int z = tileZ;

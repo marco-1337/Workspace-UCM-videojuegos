@@ -24,7 +24,7 @@ constexpr Ogre::Real HERO_SIZE = 6. * SCALE_UNIT;
 constexpr Ogre::Real HERO_SPEED = 20. * SCALE_UNIT;
 
 constexpr Ogre::Real ENEMY_SIZE = 4. * SCALE_UNIT;
-constexpr Ogre::Real ENEMY_SPEED = 15. * SCALE_UNIT;
+constexpr Ogre::Real ENEMY_SPEED = 10. * SCALE_UNIT;
 
 constexpr Ogre::Real ENEMY_SWORD_SIZE = 2. * SCALE_UNIT;
 constexpr Ogre::Real ENEMY_SWORD_RADIUS = 3.5 * SCALE_UNIT;

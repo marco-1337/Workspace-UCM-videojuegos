@@ -56,6 +56,9 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
             zPos = startZ;
     char tile;
 
+    // Bool de control para que minimo se genere un enemigo con mas mallas y movidas
+    bool min = false;
+
     for (int i = 0; i < nRows; ++i) {
         for (int j = 0; j < nCols; ++j) {
 
@@ -69,9 +72,17 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
                  
                 if (tile == 'h') {
                     hero = new Hero(createChildSceneNode(), mSM, "Sinbad.mesh", HERO_SIZE, HERO_SPEED, j, i);
-                    enemies.push_back(new Enemy(createChildSceneNode(), mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh", 
-                        "Sword.mesh", ENEMY_SWORD_SIZE, ENEMY_SWORD_RADIUS, ENEMY_SWORD_AMMOUNT, ENEMY_SWORD_ROTATION,
-                        "fish.mesh", ENEMY_FISH_SIZE, ENEMY_FISH_RADIUS, ENEMY_FISH_AMMOUNT, ENEMY_FISH_ROTATION));
+                }
+                else if (tile == 'v') {
+                    if (std::rand() % 2 == 0 && min) {
+                        enemies.push_back(new Enemy(createChildSceneNode(), mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh")); 
+                    }
+                    else {
+                        enemies.push_back(new Enemy(createChildSceneNode(), mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh", 
+                            "Sword.mesh", ENEMY_SWORD_SIZE, ENEMY_SWORD_RADIUS, ENEMY_SWORD_AMMOUNT, ENEMY_SWORD_ROTATION,
+                            "fish.mesh", ENEMY_FISH_SIZE, ENEMY_FISH_RADIUS, ENEMY_FISH_AMMOUNT, ENEMY_FISH_ROTATION));
+                        min = true;
+                    }
                 }
             }
             xPos += tileSize;
