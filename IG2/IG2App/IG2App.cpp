@@ -3,10 +3,31 @@
 #include "IG2Object.h"
 #include "Maze.h"
 #include "Hero.h"
+#include "Enemy.h"
 
 using namespace std;
 using namespace Ogre;
 
+IG2App* IG2App::mInstance = nullptr;
+
+IG2App::IG2App() : OgreBites::ApplicationContext("IG2App") {
+    if (mInstance == nullptr) {
+        mInstance = this;
+    }
+}
+
+IG2App::~IG2App() {
+    if (mInstance == this) {
+        mInstance = nullptr;
+    }
+}
+
+const IG2App& 
+IG2App::instance() {
+    if (mInstance != nullptr)
+        return *mInstance;
+    else throw std::runtime_error("No existe una instancia de IG2App");
+}
 
 bool IG2App::keyPressed(const OgreBites::KeyboardEvent& evt) {
 
@@ -20,6 +41,17 @@ bool IG2App::keyPressed(const OgreBites::KeyboardEvent& evt) {
 
 
 void IG2App::shutdown() {
+
+    for (Enemy *e : mEnemies) {
+        if (e != nullptr) delete e;
+    }
+
+    mEnemies.clear();
+
+    if (mHero != nullptr) {
+        delete mHero;
+        mHero = nullptr;
+    }
 
     if (mMaze != nullptr) {
         delete mMaze;
@@ -102,25 +134,69 @@ void IG2App::setupScene(void) {
     //------------------------------------------------------------------------
     // Creating Sinbad
 
-    //Ogre::Entity* ent = mSM->createEntity("Sinbad.mesh");
+    //Ogre::Entity* ent = mSM->createEntity("ogrehead.mesh");
     //mSinbadNode = mSM->getRootSceneNode()->createChildSceneNode("nSinbad");
     //mSinbadNode->attachObject(ent);
 
     // Show bounding box
     //mSinbadNode->showBoundingBox(true);
 
-    mMaze = new Maze(Vector3(0.), mSM->getRootSceneNode()->createChildSceneNode(), mSM, "../stage1.txt", 
-        CUBE_SIZE, "cube.mesh");
+    mMaze = new Maze(Vector3(0.), mSM->getRootSceneNode()->createChildSceneNode(), mSM, "../stage1.txt", CUBE_SIZE, 
+        "cube.mesh", mHero, mEnemies);
 
-    addInputListener(mMaze->getHero());
+    mHero->resetPosition();
+    addInputListener(mHero);
+
+    for (Enemy* e : mEnemies) {
+        e->resetPosition();
+        addInputListener(e);
+    }
 
     // Set position of Sinbad
     //mSinbadNode->setPosition(x, y, z);
 
     // Set scale of Sinbad
-    //mSinbadNode->setScale(20, 20, 20);
+    //mSinbadNode->setScale(1, 1, 1);
     
 
     //mSinbadNode->yaw(Ogre::Degree(-45));
     //mSinbadNode->setVisible(false);    
 }
+
+bool
+IG2App::isTileTraversable(int x, int z) const {
+
+    if (mMaze != nullptr) {
+        return mMaze->isTileTraversable(x, z);
+    }
+    else return false;
+
+}
+
+bool
+IG2App::isTileTraversable(std::pair<int,int> tile) const {
+
+    if (mMaze != nullptr) {
+        return mMaze->isTileTraversable(tile.first, tile.second);
+    }
+    else return false;
+
+}
+
+Vector3
+IG2App::getPosAtTile(int x, int z) const {
+    if (mMaze != nullptr) {
+        return mMaze->getPosAtTile(x, z);
+    }
+    else return Vector3(0.);
+}
+
+std::pair<int, int>
+IG2App::getTileInPos(Vector3 v) const {
+
+    if (mMaze != nullptr) {
+        return mMaze->getTileInPos(v);
+    }
+    else return {0., 0.};
+}
+

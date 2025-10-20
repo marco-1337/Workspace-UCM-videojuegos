@@ -23,7 +23,10 @@ add_executable(IG2App
     "src/IG2Object.cpp"
     "src/Maze.cpp"
     "src/Tile.cpp"
-    "src/Hero.cpp")
+    "src/Character.cpp"
+    "src/Hero.cpp"
+    "src/Helix.cpp"
+    "src/Enemy.cpp")
 
 target_include_directories(IG2App PRIVATE
     "${CMAKE_SOURCE_DIR}"

@@ -5,26 +5,20 @@
 
 class Tile;
 class Hero;
+class Enemy;
 
 class Maze: public IG2Object {
 public:
     Maze(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, const String& srcFile, Real tileSize,
-        const String& tileMesh);
+        const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies);
     ~Maze();
 
     bool isTileTraversable(int x, int z) const;
-
-    // no se por que pasa, pero si pasas esto como referencia el punto flotante, los 0. se los carga y se convierten en yo quese
     Vector3 getPosAtTile(int x, int z) const;
-    const std::pair<int, int>& getHeroStartingTile() const;
-    const std::pair<int, int>& getTileInPos(Vector3 v) const;
-    Real getTileSize() const;
-    Hero* getHero() const;
-    
+    std::pair<int, int> getTileInPos(Vector3 v) const;
+
 private:
-    void buildMaze(const String& srcFile, const String& tileMesh);
+    void buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies);
     Real tileSize;
-    int heroStartRow, heroStartCol;
     std::vector<std::vector<Tile*>> mazeNodes;
-    Hero* hero;
 };

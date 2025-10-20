@@ -2,16 +2,17 @@
 #include "IG2App.h"
 #include "Tile.h"
 #include "Hero.h"
+#include "Enemy.h"
 
 #include <fstream>
 
 Maze::Maze(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, const String& srcFile, Real tileSize, 
-    const String& tileMesh) 
+    const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies) 
 : IG2Object(initPos, node, sceneMng),
-tileSize(tileSize),
-heroStartRow(0),
-heroStartCol(0) {
-    buildMaze(srcFile, tileMesh);
+tileSize(tileSize) {
+    hero = nullptr;
+    enemies = std::vector<Enemy*>();
+    buildMaze(srcFile, tileMesh, hero, enemies);
 }
 
 Maze::~Maze() {
@@ -24,15 +25,10 @@ Maze::~Maze() {
         row.clear();
     }
     mazeNodes.clear();
-
-    if (hero != nullptr) {
-        delete hero;
-        hero = nullptr;
-    }
 }
 
 void
-Maze::buildMaze(const String& srcFile, const String& tileMesh) {
+Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies) {
 
     std::ifstream mazeFile(srcFile);
 
@@ -66,17 +62,16 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh) {
             mazeFile >> tile;
 
             if (tile == 'x') {
-                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM,
-                    tileMesh, tileSize);
+                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM, tileMesh, tileSize);
             }
             else {
-                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM,
-                    tileSize);
-                
+                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM, tileSize);
+                 
                 if (tile == 'h') {
-                    heroStartRow = i;
-                    heroStartCol = j;
-                    hero = new Hero(createChildSceneNode(), mSM, "Sinbad.mesh", CUBE_SIZE, HERO_SPEED, this);
+                    hero = new Hero(createChildSceneNode(), mSM, "Sinbad.mesh", HERO_SIZE, HERO_SPEED, j, i);
+                    enemies.push_back(new Enemy(createChildSceneNode(), mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh", 
+                        "Sword.mesh", ENEMY_SWORD_SIZE, ENEMY_SWORD_RADIUS, ENEMY_SWORD_AMMOUNT, ENEMY_SWORD_ROTATION,
+                        "fish.mesh", ENEMY_FISH_SIZE, ENEMY_FISH_RADIUS, ENEMY_FISH_AMMOUNT, ENEMY_FISH_ROTATION));
                 }
             }
             xPos += tileSize;
@@ -104,29 +99,14 @@ Maze::getPosAtTile(int x, int z) const {
     return mazeNodes[z][x]->getPosition();
 }
 
-const std::pair<int, int>&
-Maze::getHeroStartingTile() const {
-    return {heroStartCol, heroStartRow};
-}
-
-const std::pair<int, int>& 
+std::pair<int, int>
 Maze::getTileInPos(Vector3 v) const {
 
     Vector3 originPos = mazeNodes[0][0]->getPosition();
 
-    originPos.x -= tileSize/2.;
-    originPos.z -= tileSize/2.;
+    originPos.x -= tileSize/Real(2.);
+    originPos.z -= tileSize/Real(2.);
 
     v = v - originPos;
     return {v.x / tileSize, v.z /tileSize};
-}
-
-Real
-Maze::getTileSize() const {
-    return tileSize;
-}
-
-Hero*
-Maze::getHero() const {
-    return hero;
 }

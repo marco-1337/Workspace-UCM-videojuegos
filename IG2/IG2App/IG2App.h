@@ -19,29 +19,56 @@
 
 constexpr Ogre::Real SCALE_UNIT = 10.;
 constexpr Ogre::Real CUBE_SIZE = 5. * SCALE_UNIT;
+
+constexpr Ogre::Real HERO_SIZE = 6. * SCALE_UNIT;
 constexpr Ogre::Real HERO_SPEED = 20. * SCALE_UNIT;
+
+constexpr Ogre::Real ENEMY_SIZE = 4. * SCALE_UNIT;
+constexpr Ogre::Real ENEMY_SPEED = 15. * SCALE_UNIT;
+
+constexpr Ogre::Real ENEMY_SWORD_SIZE = 2. * SCALE_UNIT;
+constexpr Ogre::Real ENEMY_SWORD_RADIUS = 3.5 * SCALE_UNIT;
+constexpr int ENEMY_SWORD_AMMOUNT = 5;
+constexpr Ogre::Real ENEMY_SWORD_ROTATION = -90.;
+
+constexpr Ogre::Real ENEMY_FISH_SIZE = 1. * SCALE_UNIT;
+constexpr Ogre::Real ENEMY_FISH_RADIUS = 4.5 * SCALE_UNIT;
+constexpr int ENEMY_FISH_AMMOUNT = 5;
+constexpr Ogre::Real ENEMY_FISH_ROTATION = 90.;
 
 class IG2Object;
 class Maze;
 class Hero;
+class Enemy;
 
 class IG2App: public OgreBites::ApplicationContext, OgreBites::InputListener {
 
 public:
 
-    explicit IG2App() : OgreBites::ApplicationContext("IG2App") {};
-    virtual ~IG2App() {};
+    static const IG2App& instance();
+
+    IG2App();
+    virtual ~IG2App();
+
+    bool isTileTraversable(int x, int z) const;
+    bool isTileTraversable(std::pair<int, int> tile) const;
+    Ogre::Vector3 getPosAtTile(int x, int z) const;
+    std::pair<int, int> getTileInPos(Ogre::Vector3 v) const;
 
 protected:
+
+    static IG2App* mInstance;
+
     virtual bool keyPressed(const OgreBites::KeyboardEvent& evt);
     virtual void setup();
     virtual void shutdown();
     virtual void setupScene();
 
-
     Ogre::SceneNode* mSinbadNode = nullptr;
 
-    Maze* mMaze = nullptr;
+    Maze *mMaze = nullptr;
+    Hero *mHero = nullptr;
+    std::vector<Enemy*> mEnemies;
 
     Ogre::SceneManager* mSM = nullptr;
     OgreBites::TrayManager* mTrayMgr = nullptr;
