@@ -25,6 +25,11 @@ Maze::~Maze() {
         row.clear();
     }
     mazeNodes.clear();
+
+    if (floor != nullptr) {
+        delete floor;
+        floor = nullptr;
+    }
 }
 
 void
@@ -92,12 +97,20 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
     }
 
     mazeFile.close();
+
+    MeshManager::getSingleton().createPlane("mMazePlane",
+        ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+        Plane(Vector3::UNIT_Y, 0),
+        nCols*tileSize*1.2, nRows*tileSize*1.2, nCols, nRows,
+        true, 1, 1.0, 1.0, Vector3::UNIT_Z);
+    
+    floor = new IG2Object(Vector3(0., -tileSize, 0.), createChildSceneNode(), mSM, "mMazePlane");
 }
 
 bool
 Maze::isTileTraversable(int x, int z) const {
 
-    if (x < 0 || z < 0 || z > mazeNodes.size() || x > mazeNodes[0].size()) {
+    if (x < 0 || z < 0 || z >= mazeNodes.size() || x >= mazeNodes[0].size()) {
         return true;
     }
 

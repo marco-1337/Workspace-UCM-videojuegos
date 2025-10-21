@@ -8,7 +8,7 @@ class Character: public IG2Object {
 public:
     Character(SceneNode *node, SceneManager* sceneMng, String mesh, Real speed, int tileX, int tileZ);
 
-    void resetPosition();
+    virtual void resetPosition();
 protected:
     int tileX, tileZ,
         startingTileX, startingTileZ;

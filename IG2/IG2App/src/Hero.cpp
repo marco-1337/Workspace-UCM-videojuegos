@@ -1,4 +1,6 @@
 #include "Hero.h"
+#include "IG2App.h"
+#include <iostream>
 
 Hero::Hero(SceneNode *node, SceneManager *sceneMng, String mesh, Real fitSize, Real speed, int tileX, int tileZ)
 : Character(node, sceneMng, mesh, speed, tileX, tileZ) {
@@ -6,6 +8,8 @@ Hero::Hero(SceneNode *node, SceneManager *sceneMng, String mesh, Real fitSize, R
     Vector3 currSize = getAABB().getSize();
     currSize = Vector3(std::max(currSize.x, currSize.z));
     mNode->setScale((fitSize / currSize));
+
+    mNode->showBoundingBox(true);
 }
 
 bool
@@ -54,5 +58,18 @@ Hero::frameRendered(const Ogre::FrameEvent& evt) {
     if (dirX != 0 || dirZ != 0) {
         Real dist = evt.timeSinceLastFrame * speed;
         move(dist);
+    }
+
+    if (IG2App::instance().checkCollisionTowardsEnemies()) hurt();
+}
+
+void
+Hero::hurt() {
+    if (--lives <= 0) {
+        lives = 3;
+        IG2App::instance().restartGame();
+    }
+    else {
+        resetPosition();
     }
 }

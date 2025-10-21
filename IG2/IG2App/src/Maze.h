@@ -21,4 +21,5 @@ private:
     void buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies);
     Real tileSize;
     std::vector<std::vector<Tile*>> mazeNodes;
+    IG2Object *floor = nullptr;
 };

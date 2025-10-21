@@ -45,7 +45,7 @@ class IG2App: public OgreBites::ApplicationContext, OgreBites::InputListener {
 
 public:
 
-    static const IG2App& instance();
+    static IG2App& instance();
 
     IG2App();
     virtual ~IG2App();
@@ -54,6 +54,8 @@ public:
     bool isTileTraversable(std::pair<int, int> tile) const;
     Ogre::Vector3 getPosAtTile(int x, int z) const;
     std::pair<int, int> getTileInPos(Ogre::Vector3 v) const;
+    bool checkCollisionTowardsEnemies() const;
+    void restartGame();
 
 protected:
 
@@ -63,9 +65,7 @@ protected:
     virtual void setup();
     virtual void shutdown();
     virtual void setupScene();
-
-    Ogre::SceneNode* mSinbadNode = nullptr;
-
+    
     Maze *mMaze = nullptr;
     Hero *mHero = nullptr;
     std::vector<Enemy*> mEnemies;

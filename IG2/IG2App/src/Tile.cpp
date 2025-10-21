@@ -5,7 +5,9 @@ Tile::Tile(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, String mesh
 : IG2Object(initPos, node, sceneMng, mesh),
 traversable(traversable) {
     mNode->_update(true, true);
-    mNode->setScale(fitSize / getAABB().getSize());
+    Vector3 scale = fitSize / getAABB().getSize();
+    scale.y /= 2;
+    mNode->setScale(scale);
     mNode->showBoundingBox(true);
 }
 
@@ -14,7 +16,9 @@ Tile::Tile(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, Real fitSiz
 : IG2Object(initPos, node, sceneMng),
 traversable(traversable) {
     mNode->_update(true, true);
-    mNode->setScale(fitSize / getAABB().getSize());
+    Vector3 scale = fitSize / getAABB().getSize();
+    scale.y /= 2;
+    mNode->setScale(scale);
     mNode->showBoundingBox(true);
 }
 

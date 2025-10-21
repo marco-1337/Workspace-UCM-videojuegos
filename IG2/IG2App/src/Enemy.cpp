@@ -55,6 +55,8 @@ Enemy::Enemy(SceneNode *node, SceneManager* sceneMng, Real fitSize, Real speed, 
     // Evita deformar las entidades
     currSize = Vector3(std::max(currSize.x, currSize.z));
     mNode->setScale((fitSize / currSize));
+
+    mNode->showBoundingBox(true);
 }
 
 Enemy::Enemy(SceneNode *node, SceneManager* sceneMng, Real fitSize, Real speed, int tileX, int tileZ, String mainMesh,
@@ -75,6 +77,8 @@ secondRotation(secondHelixRotation) {
         firstBladeMesh, firstBladeSize, firstHelixRadius, firstHelixAmmount);
     secondHelix = new Helix(Vector3(0.), createChildSceneNode(), mSM, 
         secondBladeMesh, secondBladeSize, secondHelixRadius, secondHelixAmmount);
+
+    mNode->showBoundingBox(true);
 }
 
 Enemy::~Enemy() {
@@ -114,6 +118,13 @@ Enemy::frameRendered(const Ogre::FrameEvent& evt) {
     else move(distance);
 
     if (x != tileX || z != tileZ) direction = NONE;
+}
+
+void
+Enemy::resetPosition() {
+    direction = NONE;
+    orientation = BACK;
+    Character::resetPosition();
 }
 
 void

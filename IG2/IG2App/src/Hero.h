@@ -9,4 +9,7 @@ public:
     bool keyPressed(const OgreBites::KeyboardEvent& evt) override;
     bool keyReleased(const OgreBites::KeyboardEvent& evt) override;
     void frameRendered(const Ogre::FrameEvent& evt) override;
+private:
+    int lives = 3;
+    void hurt();
 };

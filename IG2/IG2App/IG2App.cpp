@@ -22,7 +22,7 @@ IG2App::~IG2App() {
     }
 }
 
-const IG2App& 
+IG2App& 
 IG2App::instance() {
     if (mInstance != nullptr)
         return *mInstance;
@@ -200,3 +200,26 @@ IG2App::getTileInPos(Vector3 v) const {
     else return {0., 0.};
 }
 
+bool 
+IG2App::checkCollisionTowardsEnemies() const{
+    if (mHero != nullptr) {
+
+        AxisAlignedBox hBox = mHero->getAABB();
+
+        for (Enemy *e : mEnemies) 
+            if (e != nullptr) 
+                if (e->getAABB().intersects(hBox)) 
+                    return true;
+    }
+    
+    return false;
+}
+
+void
+IG2App::restartGame() {
+    if (mHero != nullptr) mHero->resetPosition();
+
+    for (Enemy *e : mEnemies) 
+        if (e != nullptr) 
+            e->resetPosition();
+}

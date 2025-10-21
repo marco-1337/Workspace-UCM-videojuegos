@@ -22,10 +22,15 @@ bool sameSign (Real a, Real b) {
 
 void
 Character::resetPosition() {
+
+    dirX = 0;
+    dirZ = 0;
+    
     tileX = startingTileX;
     tileZ = startingTileZ;
-
+    
     setPosition(IG2App::instance().getPosAtTile(tileX, tileZ));
+    mNode->rotate(getOrientation().getRotationTo(Vector3(0., 0., -1.)));
 }
 
 void

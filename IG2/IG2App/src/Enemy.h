@@ -29,6 +29,9 @@ public:
     virtual ~Enemy();
 
     void frameRendered(const Ogre::FrameEvent& evt) override;
+
+    virtual void resetPosition() override;
+
 private:
 
     void calculateDirection();
