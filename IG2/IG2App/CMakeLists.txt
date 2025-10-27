@@ -37,8 +37,7 @@ target_link_libraries(IG2App PRIVATE
     OgreMain
     OgreBites
     SDL2::SDL2
-    SDL2::SDL2main
-    )
+    SDL2::SDL2main)
 
 set_target_properties(IG2App PROPERTIES 
 	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin

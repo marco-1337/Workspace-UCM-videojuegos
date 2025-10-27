@@ -8,8 +8,6 @@ Hero::Hero(SceneNode *node, SceneManager *sceneMng, String mesh, Real fitSize, R
     Vector3 currSize = getAABB().getSize();
     currSize = Vector3(std::max(currSize.x, currSize.z));
     mNode->setScale((fitSize / currSize));
-
-    mNode->showBoundingBox(true);
 }
 
 bool
@@ -30,6 +28,11 @@ Hero::keyPressed(const OgreBites::KeyboardEvent& evt) {
                 else dirX = -1;
             }
         }
+        else if (evt.keysym.sym == SDLK_l && lightNode != nullptr) {
+            lightEnabled = !lightEnabled;
+            lightNode->setVisible(lightEnabled);
+        }
+
         else return false;
 
         return true;
@@ -69,7 +72,7 @@ Hero::hurt() {
         lives = 3;
         IG2App::instance().restartGame();
     }
-    else {
-        resetPosition();
-    }
+    else resetPosition();
+
+    IG2App::instance().updateScoreboard(lives, 0);
 }

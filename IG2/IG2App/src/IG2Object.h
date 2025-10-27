@@ -39,6 +39,16 @@ class IG2Object : public OgreBites::InputListener {
         IG2Object(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, String mesh);
         
         /**
+         * Constructor.
+         * @param initPos Initial position for this element.
+         * @param node Scene node for this element.
+         * @param sceneMng Scene manager.
+         * @param mesh Mesh that is applied to this element.
+         * @param material Material to be applied to the entity.
+         */
+        IG2Object(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, String mesh, String material);
+
+        /**
          * Destructor
          */
         ~IG2Object();

@@ -3,8 +3,8 @@
 #include "IG2App.h"
 
 const std::unordered_map<Direction, RelDir> RELATIVE_DIRECTIONS = {
-    {FRONT, {{0, -1}, 1}},
-    {BACK, {{0, 1}, 1}},
+    {UP, {{0, -1}, 1}},
+    {DOWN, {{0, 1}, 1}},
     {LEFT, {{-1, 0}, -1}},
     {RIGHT, {{1, 0}, -1}}
 };
@@ -16,7 +16,7 @@ getRelativeDirection(Direction lookingAt, Direction goingTo) {
     int mult = RELATIVE_DIRECTIONS.at(lookingAt).oppositeAxisSign;
 
     switch (goingTo) {
-        case FRONT:
+        case UP:
             return dir;
             break;
         case LEFT:
@@ -34,8 +34,8 @@ Direction
 getOrientationToDir(int x, int z) {
     if (x == 1) return RIGHT;
     if (x == -1) return LEFT;
-    if (z == 1) return BACK;
-    if (z == -1) return FRONT;
+    if (z == 1) return DOWN;
+    if (z == -1) return UP;
 
     return NONE;
 }
@@ -45,8 +45,6 @@ getRelativeTile(Direction lookingAt, Direction goingTo, int x, int z) {
     std::pair<int,int> dir = getRelativeDirection(lookingAt, goingTo);
     return {dir.first + x, dir.second + z}; 
 }
-
-
 
 Enemy::Enemy(SceneNode *node, SceneManager* sceneMng, Real fitSize, Real speed, int tileX, int tileZ, String mainMesh)
 : Character(node, sceneMng, mainMesh, speed, tileX, tileZ) {
@@ -60,11 +58,17 @@ Enemy::Enemy(SceneNode *node, SceneManager* sceneMng, Real fitSize, Real speed, 
 }
 
 Enemy::Enemy(SceneNode *node, SceneManager* sceneMng, Real fitSize, Real speed, int tileX, int tileZ, String mainMesh,
-    String firstBladeMesh, Real firstBladeSize, Real firstHelixRadius, int firstHelixAmmount, Real firstHelixRotation,
-    String secondBladeMesh, Real secondBladeSize, Real secondHelixRadius, int secondHelixAmmount, Real secondHelixRotation)
+    String firstBladeMesh, Real firstBladeSize, Real firstHelixRadius, 
+    int firstHelixAmmount, Real firstHelixRotation, uint64_t firstRotationTime,
+    String secondBladeMesh, Real secondBladeSize, Real secondHelixRadius, 
+    int secondHelixAmmount, Real secondHelixRotation, uint64_t secondRotationTime)
 : Character(node, sceneMng, mainMesh, speed, tileX, tileZ),
 firstRotation(firstHelixRotation),
-secondRotation(secondHelixRotation) {
+secondRotation(secondHelixRotation),
+firstTimeLimit(firstRotationTime),
+secondTimeLimit(secondRotationTime),
+firstTimer(),
+secondTimer() {
 
     // Obtiene antes el tamaño
     mNode->_update(true, true);
@@ -79,6 +83,9 @@ secondRotation(secondHelixRotation) {
         secondBladeMesh, secondBladeSize, secondHelixRadius, secondHelixAmmount);
 
     mNode->showBoundingBox(true);
+
+    firstTimer.reset();
+    secondTimer.reset();
 }
 
 Enemy::~Enemy() {
@@ -95,8 +102,20 @@ Enemy::~Enemy() {
 
 void 
 Enemy::frameRendered(const Ogre::FrameEvent& evt) {
-    if (firstHelix != nullptr) firstHelix->roll(Degree(firstRotation * evt.timeSinceLastFrame));
-    if (secondHelix != nullptr) secondHelix->roll(Degree(secondRotation * evt.timeSinceLastFrame));
+    if (firstHelix != nullptr) {
+        firstHelix->roll(Degree(firstRotation * evt.timeSinceLastFrame));
+        if (firstTimer.getMilliseconds() > firstTimeLimit) {
+            firstTimer.reset();
+            firstRotation *= -1.;
+        }
+    }
+    if (secondHelix != nullptr) {
+        secondHelix->roll(Degree(secondRotation * evt.timeSinceLastFrame));
+        if (secondTimer.getMilliseconds() > secondTimeLimit) {
+            secondTimer.reset();
+            secondRotation *= -1.;
+        }
+    }
 
     int x = tileX;
     int z = tileZ;
@@ -108,7 +127,7 @@ Enemy::frameRendered(const Ogre::FrameEvent& evt) {
         calculateDirection();
     }
     
-    if (direction == BACK) {
+    if (direction == DOWN) {
         move(distance);
         if (distance > 0.) {
             calculateDirection();
@@ -123,27 +142,27 @@ Enemy::frameRendered(const Ogre::FrameEvent& evt) {
 void
 Enemy::resetPosition() {
     direction = NONE;
-    orientation = BACK;
+    orientation = DOWN;
     Character::resetPosition();
 }
 
 void
 Enemy::calculateDirection() {
-    if (IG2App::instance().isTileTraversable(getRelativeTile(orientation, FRONT, tileX, tileZ))) auxOptions.push_back(FRONT);
+    if (IG2App::instance().isTileTraversable(getRelativeTile(orientation, UP, tileX, tileZ))) auxOptions.push_back(UP);
     if (IG2App::instance().isTileTraversable(getRelativeTile(orientation, LEFT, tileX, tileZ))) auxOptions.push_back(LEFT);
     if (IG2App::instance().isTileTraversable(getRelativeTile(orientation, RIGHT, tileX, tileZ))) auxOptions.push_back(RIGHT);
 
-    if (auxOptions.empty()) direction = BACK;
+    if (auxOptions.empty()) direction = DOWN;
     else direction = auxOptions[std::rand() % auxOptions.size()];
     
     // Si tengo que ir hacia atrás primero me estampo, pero si que cambio la orientacion para cuando recalcule
-    std::pair<int, int> dir = getRelativeDirection(orientation, (direction == BACK) ? FRONT : direction);
+    std::pair<int, int> dir = getRelativeDirection(orientation, (direction == DOWN) ? UP : direction);
     
     dirX = dir.first;
     dirZ = dir.second;
 
     // La direccion si que la cambio para cuando deje de estamparse, cuando se recalcule, el nuevo front será el antiguo back
-    if (direction == BACK) orientation = getOrientationToDir(-dirX, -dirZ);
+    if (direction == DOWN) orientation = getOrientationToDir(-dirX, -dirZ);
     else orientation = getOrientationToDir(dirX, dirZ);
 
     auxOptions.clear();

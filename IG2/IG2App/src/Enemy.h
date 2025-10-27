@@ -5,10 +5,12 @@ class Helix;
 
 #include "Character.h"
 
+#include "OgreTimer.h"
+
 enum Direction {
     NONE,
-    FRONT,
-    BACK,
+    UP,
+    DOWN,
     LEFT,
     RIGHT
 };
@@ -23,8 +25,10 @@ public:
     Enemy(SceneNode *node, SceneManager *sceneMng, Real fitSize, Real speed, int tileX, int tileZ, String mainMesh);
 
     Enemy(SceneNode *node, SceneManager* sceneMng, Real fitSize, Real speed, int tileX, int tileZ, String mainMesh, 
-        String firstHelixBladeMesh, Real firstBladeSize, Real firstHelixRadius, int firstHelixAmmount, Real firstHelixRotation, 
-        String secondHelixBladeMesh, Real secondBladeSize, Real secondHelixRadius, int secondHelixAmmount, Real secondHelixRotation);
+        String firstHelixBladeMesh, Real firstBladeSize, Real firstHelixRadius, 
+        int firstHelixAmmount, Real firstHelixRotation, uint64_t firstRotationTime,
+        String secondHelixBladeMesh, Real secondBladeSize, Real secondHelixRadius, 
+        int secondHelixAmmount, Real secondHelixRotation, uint64_t secondRotationTime);
 
     virtual ~Enemy();
 
@@ -40,8 +44,10 @@ private:
     Helix  *secondHelix = nullptr;
 
     Real firstRotation, secondRotation;
+    uint64_t firstTimeLimit, secondTimeLimit;
+    Timer firstTimer, secondTimer;
 
-    Direction direction = NONE, orientation = BACK;
+    Direction direction = NONE, orientation = UP;
 
     std::vector<Direction> auxOptions;
 };

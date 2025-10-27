@@ -1,5 +1,8 @@
 19
 19
+Practica1/Bloque
+Practica1/Suelo
+point
 xxxxxxxxxxxxxxxxxxx
 xooooooooxoooooooox
 xoxxoxxxoxoxxxoxxox

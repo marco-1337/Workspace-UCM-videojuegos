@@ -5,6 +5,8 @@
 #include "Hero.h"
 #include "Enemy.h"
 
+#include "OgreMath.h"
+
 using namespace std;
 using namespace Ogre;
 
@@ -35,10 +37,13 @@ bool IG2App::keyPressed(const OgreBites::KeyboardEvent& evt) {
     if (evt.keysym.sym == SDLK_ESCAPE) {
         getRoot()->queueEndRendering();
     }
+    else if (evt.keysym.sym == SDLK_l && mLightNode != nullptr) {
+        dirLight = !dirLight;
+        mLightNode->setVisible(dirLight);
+    }
 
     return true;
 }
-
 
 void IG2App::shutdown() {
 
@@ -106,9 +111,6 @@ void IG2App::setupScene(void) {
     mCamNode = mSM->getRootSceneNode()->createChildSceneNode("nCam");
     mCamNode->attachObject(cam);
 
-    mCamNode->setPosition(0, 0, 1000);
-    mCamNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
-
     // and tell it to render into the main window
     Viewport* vp = getRenderWindow()->addViewport(cam);
 
@@ -116,20 +118,16 @@ void IG2App::setupScene(void) {
     addInputListener(mCamMgr);
     mCamMgr->setStyle(OgreBites::CS_ORBIT);
 
+    mCamNode->setPosition(0., 1300., 0.);
+    mCamNode->lookAt(Ogre::Vector3(0, 0, 0), Ogre::Node::TS_WORLD);
+    mCamNode->roll(Radian(Math::PI));
 
     //------------------------------------------------------------------------
     // Creating the light
 
     //mSM->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
     
-    Light* luz = mSM->createLight("Luz");
-    luz->setType(Ogre::Light::LT_DIRECTIONAL);
-    luz->setDiffuseColour(0.75, 0.75, 0.75);
-
-    mLightNode = mSM->getRootSceneNode()->createChildSceneNode("nLuz");
-    mLightNode->attachObject(luz);
-    mLightNode->setDirection(Ogre::Vector3(-1, -1, -1));
- 
+    dirLight = true;
 
     //------------------------------------------------------------------------
     // Creating Sinbad
@@ -141,8 +139,13 @@ void IG2App::setupScene(void) {
     // Show bounding box
     //mSinbadNode->showBoundingBox(true);
 
+    mTrayMgr->createLabel(OgreBites::TL_BOTTOMRIGHT, "Label", "OgreMan", 100.);
+    mScoreboard = mTrayMgr->createTextBox(OgreBites::TL_BOTTOMRIGHT, "ScoreBoard", "Información", 200, 120);
+
+    updateScoreboard(3, 0);
+
     mMaze = new Maze(Vector3(0.), mSM->getRootSceneNode()->createChildSceneNode(), mSM, "../stage1.txt", CUBE_SIZE, 
-        "cube.mesh", mHero, mEnemies);
+        "cube.mesh", mHero, mEnemies, light, mLightNode);
 
     mHero->resetPosition();
     addInputListener(mHero);
@@ -222,4 +225,18 @@ IG2App::restartGame() {
     for (Enemy *e : mEnemies) 
         if (e != nullptr) 
             e->resetPosition();
+
+    cout << "---------------------------------\n" << 
+            "|       FIN DE LA PARTIDA       |\n" <<
+            "---------------------------------\n\n\n" <<
+            "PARTIDA REINICIADA (!)\n\n";
+}
+
+void 
+IG2App::updateScoreboard(int lives, int points) {
+    if (mScoreboard != nullptr) {
+        mScoreboard->clearText();
+        mScoreboard->appendText("Lives: " + to_string(lives));
+        mScoreboard->appendText("\nPoints: " + to_string(points));
+    }
 }

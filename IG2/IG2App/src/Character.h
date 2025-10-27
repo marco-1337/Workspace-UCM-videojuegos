@@ -7,8 +7,14 @@ class IG2App;
 class Character: public IG2Object {
 public:
     Character(SceneNode *node, SceneManager* sceneMng, String mesh, Real speed, int tileX, int tileZ);
+    ~Character();
 
     virtual void resetPosition();
+
+    void addPointlight(Vector3 position, float r, float g, float b);
+    void addSpotlight(Vector3 position, float r, float g, float b, Vector3 direction, 
+        Degree innerAngle, Degree outerAngle, float falloff);
+
 protected:
     int tileX, tileZ,
         startingTileX, startingTileZ;
@@ -19,4 +25,10 @@ protected:
 
     // devuelve la distancia sobrante
     void move(Real& distance);
+
+    void deleteLight();
+
+    Light *light = nullptr;
+    SceneNode *lightNode = nullptr;
+    bool lightEnabled = true;
 };

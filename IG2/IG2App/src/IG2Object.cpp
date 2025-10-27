@@ -16,6 +16,16 @@ IG2Object::IG2Object(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, S
     this->setPosition(initialPosition);
 }
 
+IG2Object::IG2Object(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, String mesh, String material)
+: initialPosition(initPos), mNode(node), mSM(sceneMng){
+    
+    // Creates a new entity with the mesh and attach the entity
+    entity = sceneMng->createEntity(mesh);
+    entity->setMaterialName(material);
+    mNode->attachObject(entity);
+    this->setPosition(initialPosition);
+}
+
 IG2Object::~IG2Object() {
     
     this->removeEntity();
@@ -116,4 +126,3 @@ Vector3 IG2Object::calculateBoxSize (){
 const AxisAlignedBox& IG2Object::getAABB(){    
     return mNode->_getWorldAABB();
 }
-

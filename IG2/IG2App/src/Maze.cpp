@@ -7,12 +7,12 @@
 #include <fstream>
 
 Maze::Maze(Vector3 initPos, SceneNode *node, SceneManager* sceneMng, const String& srcFile, Real tileSize, 
-    const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies) 
+    const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies, Ogre::Light*& light, Ogre::SceneNode*& lightNode) 
 : IG2Object(initPos, node, sceneMng),
 tileSize(tileSize) {
     hero = nullptr;
     enemies = std::vector<Enemy*>();
-    buildMaze(srcFile, tileMesh, hero, enemies);
+    buildMaze(srcFile, tileMesh, hero, enemies, light, lightNode);
 }
 
 Maze::~Maze() {
@@ -33,7 +33,8 @@ Maze::~Maze() {
 }
 
 void
-Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies) {
+Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std::vector<Enemy*>& enemies, 
+    Ogre::Light*& light, Ogre::SceneNode*& lightNode) {
 
     std::ifstream mazeFile(srcFile);
 
@@ -42,7 +43,8 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
     Vector3 initPos = getPosition();
 
     int nCols, nRows;
-    mazeFile >> nCols >> nRows;
+    std::string materialMuro, materialSuelo, tipoLuz;
+    mazeFile >> nCols >> nRows >> materialMuro >> materialSuelo >> tipoLuz;
 
     mazeNodes = std::vector<std::vector<Tile*>>(nRows, std::vector<Tile*>(nCols, nullptr));
 
@@ -70,10 +72,11 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
             mazeFile >> tile;
 
             if (tile == 'x') {
-                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM, tileMesh, tileSize);
+                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM, tileMesh, 
+                    materialMuro, tileSize);
             }
             else {
-                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM, tileSize);
+                mazeNodes[i][j] = new Tile(Vector3(xPos, initialPosition.y, zPos), createChildSceneNode(), mSM);
                  
                 if (tile == 'h') {
                     hero = new Hero(createChildSceneNode(), mSM, "Sinbad.mesh", HERO_SIZE, HERO_SPEED, j, i);
@@ -83,9 +86,12 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
                         enemies.push_back(new Enemy(createChildSceneNode(), mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh")); 
                     }
                     else {
-                        enemies.push_back(new Enemy(createChildSceneNode(), mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh", 
-                            "Sword.mesh", ENEMY_SWORD_SIZE, ENEMY_SWORD_RADIUS, ENEMY_SWORD_AMMOUNT, ENEMY_SWORD_ROTATION,
-                            "fish.mesh", ENEMY_FISH_SIZE, ENEMY_FISH_RADIUS, ENEMY_FISH_AMMOUNT, ENEMY_FISH_ROTATION));
+                        enemies.push_back(new Enemy(createChildSceneNode(), 
+                            mSM, ENEMY_SIZE, ENEMY_SPEED, j, i, "ogrehead.mesh", 
+                            "Sword.mesh", ENEMY_SWORD_SIZE, ENEMY_SWORD_RADIUS, 
+                            ENEMY_SWORD_AMMOUNT, ENEMY_SWORD_ROTATION, ENEMY_SWORD_ROTATION_TIME,
+                            "fish.mesh", ENEMY_FISH_SIZE, ENEMY_FISH_RADIUS, 
+                            ENEMY_FISH_AMMOUNT, ENEMY_FISH_ROTATION, ENEMY_FISH_ROTATION_TIME));
                         min = true;
                     }
                 }
@@ -102,9 +108,27 @@ Maze::buildMaze(const String& srcFile, const String& tileMesh, Hero*& hero, std:
         ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
         Plane(Vector3::UNIT_Y, 0),
         nCols*tileSize*1.2, nRows*tileSize*1.2, nCols, nRows,
-        true, 1, 1.0, 1.0, Vector3::UNIT_Z);
+        true, 1, nCols/3., nRows/3., Vector3::UNIT_Z);
     
-    floor = new IG2Object(Vector3(0., -tileSize, 0.), createChildSceneNode(), mSM, "mMazePlane");
+    floor = new IG2Object(Vector3(0., -tileSize, 0.), createChildSceneNode(), mSM, "mMazePlane", materialSuelo);
+    
+    if (tipoLuz == "directional") {
+        light = mSM->createLight("Luz");
+        light->setType(Ogre::Light::LT_DIRECTIONAL);
+        light->setDiffuseColour(1., 1., 1.);
+        light->setSpecularColour(1., 1., 1.);
+
+        lightNode = mSM->getRootSceneNode()->createChildSceneNode("nLuz");
+        lightNode->attachObject(light);
+        lightNode->setDirection(Ogre::Vector3(1, -2, 1));
+    }
+    else if (tipoLuz == "spot") {
+        hero->addSpotlight(Vector3(0., 80., 0.), 1.0, 1.0, 1.0, Vector3(0., -1., 0.), Degree(45.), Degree(90.), 1.0f);
+    }
+    else if (tipoLuz == "point") {
+        hero->addPointlight(Vector3(0., 30., 0.), 1.0, 1.0, 1.0);
+    }
+
 }
 
 bool

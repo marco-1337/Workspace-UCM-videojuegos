@@ -16,6 +16,10 @@ startingTileZ(tileZ)
     mNode->setPosition(IG2App::instance().getPosAtTile(tileX, tileZ));
 }
 
+Character::~Character() {
+    deleteLight();
+}
+
 bool sameSign (Real a, Real b) {
     return (a < 0. && b < 0. ) || (a > 0. && b > 0);
 }
@@ -30,7 +34,53 @@ Character::resetPosition() {
     tileZ = startingTileZ;
     
     setPosition(IG2App::instance().getPosAtTile(tileX, tileZ));
-    mNode->rotate(getOrientation().getRotationTo(Vector3(0., 0., -1.)));
+    mNode->rotate(getOrientation().getRotationTo(Vector3(0., 0., 1.)));
+}
+
+void 
+Character::addPointlight(Vector3 position, float r, float g, float b) {
+    
+    deleteLight();
+    
+    light = mSM->createLight("PointLightHero");
+    light->setType(Light::LT_POINT);
+    light->setDiffuseColour(r, g, b);
+
+    lightNode = createChildSceneNode();
+    lightNode->setPosition(position);
+    lightNode->attachObject(light);
+}
+
+void 
+Character::addSpotlight(Vector3 position, float r, float g, float b, Vector3 direction, 
+    Degree innerAngle, Degree outerAngle, float falloff) {
+    
+    deleteLight();
+
+    light = mSM->createLight("SpotLight");
+    light->setType(Light::LT_SPOTLIGHT);
+    light->setSpotlightInnerAngle(innerAngle);
+    light->setSpotlightOuterAngle(outerAngle);
+    light->setSpotlightFalloff(falloff);
+    light->setDiffuseColour(r, g, b);
+
+    lightNode = createChildSceneNode();
+    lightNode->setPosition(position);
+    lightNode->setDirection(direction);
+    lightNode->attachObject(light);
+}
+
+void
+Character::deleteLight() {
+    if (light != nullptr) {
+        mSM->destroyEntity(light);
+        light = nullptr;
+    }
+
+    if (lightNode != nullptr) {
+        mSM->destroySceneNode(lightNode);
+        lightNode = nullptr;
+    }
 }
 
 void
