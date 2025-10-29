@@ -7,11 +7,11 @@
 
 #include <iostream>
 #include <fstream>
-#include <...>
 
 using namespace std;
 
-#include "..."  // propios o los de las estructuras de datos de clase
+#include "GrafoValorado.h"  // propios o los de las estructuras de datos de clase
+#include "DijkstraIndirecto.h"
 
 /*@ <answer>
 
@@ -30,12 +30,46 @@ using namespace std;
 bool resuelveCaso() {
 	// leer los datos de la entrada
 
+    GrafoValorado<int> grafo = GrafoValorado<int>(cin, 1);
+
 	if (!std::cin)  // fin de la entrada
 		return false;
 
 	// resolver el caso posiblemente llamando a otras funciones
+    int casos, v, w;
+    cin >> casos;
+    Camino<int> camino;
 
-	// escribir la solución
+    for (int i = 0; i < casos; ++i) {
+        cin >> v >> w;
+
+        --v; --w;
+
+        DijkstraIndirecto<int> dijkstra = DijkstraIndirecto<int>(grafo, v);
+
+        // escribir la solución
+        if (dijkstra.hayCamino(w)) {
+
+            cout << dijkstra.distancia(w) << ": ";
+            camino = dijkstra.camino(w);
+
+            v = camino.size();
+
+            for (int j = 1; j < v; ++j) {
+                cout << camino.front() + 1 << " -> ";
+                camino.pop_front();
+            }
+
+            cout << camino.front() + 1;
+        }
+        else {
+            cout << "NO LLEGA";
+        }
+        
+        cout << "\n";
+    }
+
+    cout << "---\n";
 
 	return true;
 }
